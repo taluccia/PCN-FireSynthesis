@@ -1,0 +1,100 @@
+---
+title: "Code Temperature for days above freezing"
+author: "Anna Talucci"
+date: '2022-07-05'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+
+Take Holloway Excel file and covert to R code to adjust Active Layer Thickness (ALT) measured on different dates.
+
+Thawing degree days are a measure of the combined duration and magnitude of above 0C temperatures during the thawing season (or any particular date range). So, a sum of the above 0 temperatures between particular dates. For example, let's say between June 1 and 13 the average was 20C everyday. The thawing degree days would be 260. Thawing degree days (TDD) can be used to approximate the active layer depth at any given date when you don't have a measurement, because active layer depth is the square root of TDD.
+
+# Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+# Data 
+
+## Air Temperature
+```{r}
+temp = read.csv("../data/HollowayDateTemperature.csv")
+```
+
+
+```{r}
+head(temp)
+```
+```{r}
+str(temp)
+```
+## ALT
+```{r}
+alt = read.csv("../data/HollowayALT2015.csv")
+```
+
+
+```{r}
+head(alt)
+```
+
+# Formula for conversion
+
+Select days above freezing from August 16 (228) to September 2 (245)
+
+Active layer depth is the square root of TDD
+ 
+Formula Parts 
+A. Take the square root of the Sum of the total degrees above zero for dates prior to thaw depth measure
+B. Take the square root of the Sum of the total degrees above zero for dates prior to active layer thickness date ()
+
+C. Divide B by A
+F. Multiply thaw depth measure by C
+
+
+
+```{r}
+A = temp %>% 
+  dplyr::mutate(julian_date = yday(Date)) %>%
+  filter(julian_date %in% 1:228) %>%
+  filter(Air_temp > 0) %>%
+  dplyr::select(Air_temp) %>%
+  sum(.) %>%
+  sqrt(.)
+  
+  
+```
+
+```{r}
+B = temp %>% 
+  dplyr::mutate(julian_date = yday(Date)) %>%
+  filter(julian_date %in% 0:245) %>%
+  filter(Air_temp > 0) %>%
+  dplyr::select(Air_temp) %>%
+  sum(.) %>%
+  sqrt(.)
+  
+
+```
+
+
+```{r}
+C = B/A
+```
+
+# Adjust ALT
+```{r}
+adjAlt = alt %>%
+  mutate(AdjALT = round((ALT2015*C), 0))
+```
+
+```{r}
+head(adjAlt)
+```
