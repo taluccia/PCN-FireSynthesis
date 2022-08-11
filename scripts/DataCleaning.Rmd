@@ -23,6 +23,13 @@ What this script does:
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
 ```
 
 # Data
@@ -244,15 +251,28 @@ f13 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
 ##Sizov
 ```{r}
 f14 <- read.csv(f[14], header = TRUE)[,-23]
+f14
 ```
 
 ## Veraverbeke
 ```{r}
 f15 <- read.csv(f[15], header = TRUE)
+f15
+```
 
+```{r}
 # fix incorrect logical columns
 f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
+```
 
+```{r}
+f15 = f15 %>% 
+  drop_na(long) %>%
+  drop_na(lat)
+f15
+```
+
+```{r}
 f15 %>% distinct(plot_id,year,month,day,fire_id,burn_unburn)
 ```
 
@@ -339,6 +359,12 @@ min(df$year, na.rm = T)
 max(df$year, na.rm = T)
 ```
 
+min/max fire year
+```{r}
+min(df$fire_year, na.rm = T)
+max(df$fire_year, na.rm = T)
+```
+
 Min/Max Lat
 ```{r}
 min(df$lat, na.rm = T)
@@ -349,4 +375,43 @@ Min/Max Long
 ```{r}
 min(df$long, na.rm = T)
 max(df$long, na.rm = T)
+```
+
+
+# Rows with NA
+```{r}
+df[is.na(df$long),]
+```
+
+```{r}
+df[is.na(df$lat),]
+```
+# Create points shapefile
+
+## For F15
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f15_pts = st_as_sf(f15, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+```{r}
+min(f15_pts$year)
+
+max(f15_pts$year)
+```
+
+```{r}
+min(f15_pts$month)
+
+max(f15_pts$month)
+```
+
+```{r}
+min(f15_pts$day)
+
+max(f15_pts$day)
+```
+### write to shapefile
+```{r}
+st_write(f15_pts, "../outputs/Veraverbeke_points.shp", driver="ESRI Shapefile")
 ```
