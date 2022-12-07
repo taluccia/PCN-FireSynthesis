@@ -1,0 +1,91 @@
+---
+title: "Dielman Clean to Point"
+author: "Anna Talucci"
+date: '2022-12-07'
+output: html_document
+---
+
+**MISSING DAY!!!!**
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+
+## Dielman
+```{r}
+f4 <- read.csv(f[4], header = TRUE)
+```
+# fix incorrect logical columns
+```{r}
+f4[,c(11,18,20,21)] <- read.csv(f[4], header = TRUE, colClasses = "character")[,c(11,18,20,21)]
+```
+
+```{r}
+f4 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
+```
+
+```{r}
+str(f4)
+```
+
+```{r}
+f4_dates = f4 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(.)
+
+f4_dates
+```
+
+
+```{r}
+f4_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F4
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f4_pts = st_as_sf(f4_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f4_pts, "../outputs/AdjustedALT/Veraverbeke_points.shp", driver="ESRI Shapefile")
+```
