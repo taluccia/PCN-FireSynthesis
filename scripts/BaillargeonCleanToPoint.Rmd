@@ -1,0 +1,124 @@
+---
+title: "Untitled"
+author: "Anna Talucci"
+date: '2022-12-06'
+output: html_document
+---
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Baillargeon
+```{r}
+f1 <- read.csv(f[1], header = TRUE) 
+```
+
+# change organic depth range to numeric
+```{r}
+f1$organic_depth <- 25
+```
+# indicate measurements that exceed probe length
+```{r}
+f1$gt_probe[which(f1$thaw_depth == "100+")] <- "y"
+```
+# get rid of non-numeric thaw probe measurements
+```{r}
+f1$thaw_depth <- as.numeric(sub("100+", "100", f1$thaw_depth, fixed = TRUE))
+```
+# get rid of non-numeric fire year entries
+```{r}
+f1$fire_year <- as.numeric(sub("unburned", NA, f1$fire_year, fixed = TRUE))
+```
+# fix slope, which was read as logical
+```{r}
+f1$slope <- read.csv(f[1], header = TRUE, colClasses = "character")[,20]
+```
+# fix thaw_active - these are TD measurements, not ALD
+```{r}
+f1$thaw_active <- "T"
+```
+
+# examine unique combinations of identify information for aggregatation
+```{r}
+f1 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
+```
+
+```{r}
+str(f1)
+```
+
+```{r}
+f1_dates = f1 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(.)
+
+f1_dates
+```
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+f1 = f1 %>% 
+  drop_na(long) %>%
+  drop_na(lat)
+f1
+```
+
+```{r}
+f1_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F1
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f1_pts = st_as_sf(f1_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f1_pts, "../outputs/points/Baillargeon_points.shp", driver="ESRI Shapefile")
+```

@@ -1,0 +1,84 @@
+---
+title: "Breen Data Clean to point"
+author: "Anna Talucci"
+date: '2022-12-07'
+output: html_document
+---
+
+#clear environment
+```{r}
+rm(list=ls())
+```
+**THIS DTA IS INCORECTLY FORMATED**
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Veraverbeke
+```{r}
+f2 <- read.csv(f[2], header = TRUE)
+f2
+```
+```{r}
+str(f2)
+```
+```{r}
+f2_dates = f2 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(.)
+
+f2_dates
+```
+
+
+```{r}
+f2_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F2
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f2_pts = st_as_sf(f2_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f2_pts, "../outputs/AdjustedALT/Breen_points.shp", driver="ESRI Shapefile")
+```

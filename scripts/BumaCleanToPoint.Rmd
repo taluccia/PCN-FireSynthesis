@@ -1,0 +1,99 @@
+---
+title: "Buma Clean to point"
+author: "Anna Talucci"
+date: '2022-12-07'
+output: html_document
+---
+
+**MISING DAY OF MONTH!!!**
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Buma
+# read without 17th column, which is redundant to the gt_prob column
+```{r}
+f3 <- read.csv(f[3], header = TRUE)[,-17]
+```
+# fix thaw/active column, which was read as logical
+```{r}
+f3$thaw_active <- read.csv(f[3], header = TRUE, colClasses = "character")[,20]
+```
+# fix site_id for aggregating (see Note below from Buma)
+```{r}
+f3$site_id <- paste(f3$site_id, sapply(strsplit(f3$plot,"_"),"[[",2), sep="_" )
+```
+
+# fix positive longitude values, which are in the wrong hemisphere
+```{r}
+f3$long <- ifelse(f3$long > 0, -f3$long,f3$long)
+```
+NOTE---The Dalton and the Steese are larger "sites," each of which has a lot of plots in them.  But those plots do vary, so don't aggregate.  At the Dalton, there are sites with 0 (unburned), 1 (one fire, which would be 2004/2005 era), 2 fires (which would be 1970's era AND 2004 or 2005), or 3 fires (which would be 1950's, 1970's, and 2004 or 2005.  So if aggregating, what you'd want to do would be to aggregate by those treatments (0, 1, 2, or 3 fires) within the Dalton or Steese "sites."  So, sounds like you'd want to aggregate all the unburned plots at the Dalton, all the 1 burn plots at the Dalton, etc.  I would not aggregate Dalton and Steese plots together, they are functionally different sites (uplands vs. low lands, respectively).
+
+```{r}
+f3 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
+```
+
+```{r}
+str(f3)
+```
+```{r}
+f3_dates = f3 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(.)
+
+f3_dates
+```
+
+```{r}
+f3_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F3
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f3_pts = st_as_sf(f3_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f3_pts, "../outputs/AdjustedALT/Buma_points.shp", driver="ESRI Shapefile")
+```
