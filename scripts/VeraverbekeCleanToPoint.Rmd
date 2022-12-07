@@ -1,0 +1,97 @@
+---
+title: "Veraverbeke Clean data to point"
+author: "Anna Talucci"
+date: '2022-12-02'
+output: html_document
+---
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Veraverbeke
+```{r}
+f15 <- read.csv(f[15], header = TRUE)
+f15
+```
+```{r}
+str(f15)
+```
+```{r}
+f15_dates = f15 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(.)
+
+f15_dates
+```
+
+
+```{r eval=FALSE, include=FALSE}
+# fix incorrect logical columns
+f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
+```
+
+```{r eval=FALSE, include=FALSE}
+f15 = f15 %>% 
+  drop_na(long) %>%
+  drop_na(lat)
+f15
+```
+
+```{r}
+f15_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F15
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f15_pts = st_as_sf(f15_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f15_pts, "../outputs/AdjustedALT/Veraverbeke_points.shp", driver="ESRI Shapefile")
+```

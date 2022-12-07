@@ -1,0 +1,263 @@
+---
+title: "ERA5 Data"
+author: "Anna Talucci"
+date: '2022-12-02'
+output: html_document
+---
+
+# Overview
+
+Daily Aggregates https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY
+
+Mean daily air temperature converted from Kelvin to Celsius in earth engine
+
+# Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+# Data 
+
+## Air Temperature
+```{r}
+era5 = read.csv("../data/ERA5LandT2M_TEST.csv")
+```
+```{r}
+era5_mean = read.csv("../data/ERA5DailyMeanT2M_TEST.csv")
+
+```
+
+
+```{r}
+era5_v3 = read.csv("../data/ERA5LandT2M_TEST3.csv")
+```
+
+```{r}
+head(era5)
+```
+```{r}
+era5_v3
+```
+```{r}
+str(era5_v3)
+```
+```{r}
+names(era5_v3)
+```
+
+```{r}
+scale2 <- function(x, na.rm = FALSE) (x - 273.15)
+```
+
+```{r}
+replace2 = function(x) (na_if(x<0))
+```
+
+```{r}
+era5_v3 %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  mutate_at(vars(matches("temperature_2m")), scale2) %>% 
+  mutate_at(vars(matches("temperature_2m")), ~ifelse(.<=0,"NA",.)) 
+```
+Drop first and last column, scale temperature from Kelvin to Celcius, make negative temperatures zero, sum temperature by row.
+
+New data is already converted to Celsius
+```{r}
+unique(era5_mean$julinDt)
+```
+```{r}
+head(era5_mean)
+```
+# 211
+Julian Data 211 2019-07-30
+```{r}
+jd211 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==211) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190730_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd212 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==212) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190731_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd213 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==213) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190801_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+
+```{r}
+jd214 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==214) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190802_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd216 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==216) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190804_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd217 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==217) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190805_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd218 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==218) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190806_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+```{r}
+jd219 = era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==219) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20190401_mean_2m_air_temperature:X20190807_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20190401_mean_2m_air_temperature:X20190929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+  
+```
+
+# Combine
+```{r}
+adjustedData = bind_rows(list(jd211, jd212, jd213, jd214, jd216, jd217, jd218, jd219))
+```
+
+```{r}
+adjALTData = adjustedData %>% 
+  dplyr::select(brn_nbr:cntry_c, day:adjALT)
+```
+
+# Save new data
+```{r}
+write_csv(adjALTData, "../outputs/Veraverbeke_AdjAlt.csv")
+```
+
+## Older versions
+```{r}
+era5_mean %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  filter(julinDt==211) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("temperature_2m")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(TDD = sum(across(ends_with("temperature_2m"))))
+```
+
+```{r}
+era5_v3 %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  mutate_at(vars(matches("temperature_2m")), scale2) %>% 
+  mutate_at(vars(matches("temperature_2m")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(rowsum = sum(across(ends_with("temperature_2m"))))
+```
+
+mutate(sumrow = ifelse(julinDt == 211, "D",
+                                     ifelse(grade %in% 70:79, "C",
+                                            ifelse(grade %in% 80:89, "B",
+                                                   ifelse(grade %in% 90:99, "A", "F")))))
+
+```{r}
+era5_v3 %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  mutate_at(vars(matches("temperature_2m")), scale2) %>% 
+  rowwise() %>% 
+    mutate(rowsum = sum(across(ends_with("temperature_2m"))))
+  
+```
+
+```{r}
+era5_v3$X105_temperature_2m
+```
