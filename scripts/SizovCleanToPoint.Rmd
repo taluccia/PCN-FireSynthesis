@@ -1,0 +1,89 @@
+---
+title: "Sizov Clean To Point"
+author: "Anna Talucci"
+date: '2022-12-11'
+output: html_document
+---
+
+
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Sizov
+```{r}
+f14 <- read.csv(f[14], header = TRUE)
+f14
+```
+```{r}
+str(f14)
+```
+
+
+```{r}
+f14_dates = f14 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) 
+
+f14_dates
+```
+
+
+
+```{r}
+f14_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F14
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f14_pts = st_as_sf(f14_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f14_pts, "../outputs/AdjustedALT/Sizov_points.shp", driver="ESRI Shapefile")
+```

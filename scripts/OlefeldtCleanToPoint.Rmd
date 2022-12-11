@@ -1,0 +1,108 @@
+---
+title: " Gibson/Olefeldt Clean to Point"
+author: "Anna Talucci"
+date: '2022-12-11'
+output: html_document
+---
+
+Gibson/Olefeldt
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Olefeldt
+```{r}
+f11 <- read.csv(f[11], header = TRUE)
+f11
+```
+
+# fix incorrect logical columns
+```{r}
+# fix incorrect logical columns
+f11$slope <- read.csv(f[11], header = TRUE, colClasses = "character")[,20]
+
+# remove non-numeric characters from numeric vars
+# note we're loosing info on where Organic Layer Thickness is in excess of the entered value
+f11$organic_depth <- as.numeric(gsub(">", "",f11$organic_depth))
+
+f11 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
+
+```
+
+```{r}
+str(f11)
+```
+
+```{r}
+f11_dates = f11 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  dplyr::select(-fire_id)
+
+f11_dates
+```
+
+
+```{r}
+f11_dates %>% filter_all(any_vars(is.na(.))) 
+```
+
+
+
+```{r}
+f11_dates %>% distinct(julianDate, year, date)
+```
+
+# Create points shapefile
+
+## For F11
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f11_pts = st_as_sf(f11_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f11_pts, "../outputs/AdjustedALT/Olefeldt_points.shp", driver="ESRI Shapefile")
+```

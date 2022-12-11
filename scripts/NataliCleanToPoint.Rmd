@@ -1,0 +1,116 @@
+---
+title: "Natali Clean to Point"
+author: "Anna Talucci"
+date: '2022-12-11'
+output: html_document
+---
+
+
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+**MISSING SOME DAY OF MONTH** **ERROR WHEN CREATING POINTS**
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+
+# vector of data files
+```{r}
+f <- list.files(path = "../data/GoogleDriveCsvFolder/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+
+
+## Natali
+```{r}
+f9 <- read.csv(f[9], header = TRUE)
+f9
+```
+```{r}
+str(f9)
+```
+# fix incorrect logical columns
+```{r}
+# organic depth is missing, but set to NA
+f9$organic_depth <- as.numeric(f9$organic_depth)
+
+# fix incorrect logical columns
+f9[,c(20:22)] <- read.csv(f[9], header = TRUE, colClasses = "character")[,c(20:22)]
+
+# remove characters from thaw depth and convert to numeric
+f9$thaw_depth <- gsub("+", "", f9$thaw_depth, fixed = TRUE)
+f9$thaw_depth <- as.numeric(gsub(">", "", f9$thaw_depth, fixed = TRUE))
+
+```
+
+```{r}
+str(f9)
+```
+
+```{r}
+f9_dates = f9 %>%
+  mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
+  mutate(julianDate = yday(date)) %>%
+  drop_na(day) %>%
+  drop_na(thaw_depth) %>%
+  drop_na(lat) %>%
+  drop_na(long) %>%
+  dplyr::select(-fire_id, -organic_depth, -slope, -topo_position, -surface_water, -fire_year) 
+
+f9_dates
+```
+
+
+
+
+
+
+```{r}
+f9_dates %>% distinct(julianDate, year, date)
+```
+```{r}
+f9_dates %>% filter_all(any_vars(is.na(.))) 
+```
+
+# Create points shapefile
+
+## For F9
+sf::st_as_sf(dd, coords = c("x","y"))
+```{r}
+f9_pts = st_as_sf(f9_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+
+### write to shapefile
+```{r}
+st_write(f9_pts, "../outputs/AdjustedALT/Natali_points.shp", driver="ESRI Shapefile")
+```
