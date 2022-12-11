@@ -56,6 +56,11 @@ f15
 ```{r}
 str(f15)
 ```
+# fix incorrect logical columns
+```{r}
+f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
+```
+
 ```{r}
 f15_dates = f15 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
@@ -65,18 +70,6 @@ f15_dates = f15 %>%
 f15_dates
 ```
 
-
-```{r eval=FALSE, include=FALSE}
-# fix incorrect logical columns
-f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
-```
-
-```{r eval=FALSE, include=FALSE}
-f15 = f15 %>% 
-  drop_na(long) %>%
-  drop_na(lat)
-f15
-```
 
 ```{r}
 f15_dates %>% distinct(julianDate, year, date)
