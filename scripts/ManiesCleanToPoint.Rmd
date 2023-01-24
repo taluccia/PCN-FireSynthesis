@@ -78,7 +78,25 @@ f8_dates
 
 
 ```{r}
-f8_dates %>% distinct(julianDate, year, date)
+f8_dates %>% distinct(site_id, thaw_active, julianDate, year, date)
+```
+Apr 1  to September 30 (91-273)
+```{r}
+ggplot(f8_dates, aes(x=lat, y=long, color=thaw_active)) +
+  geom_jitter()
+```
+
+# Split by active & thaw
+```{r}
+f8_thaw = f8_dates %>% 
+  filter(thaw_active == "T") 
+
+f8_thaw
+
+f8_active = f8_dates %>% 
+  filter(thaw_active == "A") 
+
+f8_active
 ```
 
 # Create points shapefile
@@ -86,11 +104,13 @@ f8_dates %>% distinct(julianDate, year, date)
 ## For F8
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f8_pts = st_as_sf(f8_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f8_thaw_pts = st_as_sf(f8_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f8_active_pts = st_as_sf(f8_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f8_pts, "../outputs/AdjustedALT/Manies_points.shp", driver="ESRI Shapefile")
+st_write(f8_thaw_pts, "../outputs/ThawPoints/Manies_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f8_active_pts, "../outputs/ActivePoints/Manies_active_pts.shp", driver="ESRI Shapefile")
 ```

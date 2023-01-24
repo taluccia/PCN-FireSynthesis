@@ -5,7 +5,7 @@ date: '2022-12-07'
 output: html_document
 ---
 
-**MISSING DAY!!!!**
+**MISSING DAY!!!!** **Thaw depth missing day and needed for conversion to ALT (n=1066)**
 
 # Overview
 
@@ -63,19 +63,45 @@ str(f4)
 ```
 
 ```{r}
+unique(f4$site_id)
+```
+
+```{r}
+f4 %>% group_by(thaw_active, site_id) %>% count(.)
+```
+
+```{r}
+f4 %>% filter(thaw_active == "T")
+```
+```{r}
+f4 %>% filter(thaw_active == "A")
+```
+```{r}
 f4_dates = f4 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
-  mutate(julianDate = yday(date)) %>%
-  drop_na(.)
+  mutate(julianDate = yday(date)) 
 
 f4_dates
 ```
-
+%>%
+  drop_na(.)
 
 ```{r}
 f4_dates %>% distinct(julianDate, year, date)
 ```
 
+# Split by active & thaw
+```{r}
+f4_thaw = f4_dates %>% 
+  filter(thaw_active == "T") 
+
+f4_thaw
+
+f4_active = f4_dates %>% 
+  filter(thaw_active == "A") 
+
+f4_active
+```
 # Create points shapefile
 
 ## For F4

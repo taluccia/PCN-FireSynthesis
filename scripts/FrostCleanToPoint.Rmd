@@ -11,7 +11,7 @@ rm(list=ls())
 ```
 
 # Overview
-**MISSING DAY OF MONTH**
+**MISSING DAY OF MONTH for Thaw depth measures (n=640)**
 Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
 
 Use data from csv files in Google Drive
@@ -61,10 +61,21 @@ f6$thaw_active <- read.csv(f[6], header = TRUE, colClasses = "character")[,19]
 ```
 
 ```{r}
+unique(f6$site_id)
+```
+```{r}
+f6 %>% group_by(thaw_active, site_id) %>% count(.)
+```
+There are 732 measurements as thaw depth from site_id YKD
+
+```{r}
+f6 %>% filter(thaw_active == "T")
+```
+
+```{r}
 f6_dates = f6 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
-  mutate(julianDate = yday(date)) %>%
-  drop_na(.)
+  mutate(julianDate = yday(date)) 
 
 f6_dates
 ```
@@ -75,16 +86,29 @@ f6_dates
 f6_dates %>% distinct(julianDate, year, date)
 ```
 
+# Split by active & thaw
+```{r}
+f6_thaw = f6_dates %>% 
+  filter(thaw_active == "T") 
+
+f6_thaw
+
+f6_active = f6_dates %>% 
+  filter(thaw_active == "A") 
+
+f6_active
+```
+
 # Create points shapefile
 
 ## For F6
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f6_pts = st_as_sf(f6_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f6_thaw_pts = st_as_sf(f6_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f6_pts, "../outputs/AdjustedALT/Frost_points.shp", driver="ESRI Shapefile")
+st_write(f6_thaw_pts, "../outputs/ThawPoints/Frost_thaw_pts.shp", driver="ESRI Shapefile")
 ```

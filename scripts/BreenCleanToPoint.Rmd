@@ -9,7 +9,7 @@ output: html_document
 ```{r}
 rm(list=ls())
 ```
-**THIS DTA IS INCORECTLY FORMATED**
+**THIS DTA IS INCORRECTLY FORMATED**
 # Overview
 
 Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 

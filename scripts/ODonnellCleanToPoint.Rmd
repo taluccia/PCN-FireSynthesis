@@ -78,17 +78,41 @@ f10_dates
 ```{r}
 f10_dates %>% distinct(julianDate, year, date)
 ```
+```{r}
+f10_dates %>% distinct(site_id, thaw_active, julianDate, year, date)
+```
+
+```{r}
+ggplot(f10_dates, aes(x=lat, y=long, color=thaw_active)) +
+  geom_point()
+```
+
+
+# Split by active & thaw
+```{r}
+f10_thaw = f10_dates %>% 
+  filter(thaw_active == "T") 
+
+f10_thaw
+
+f10_active = f10_dates %>% 
+  filter(thaw_active == "A") 
+
+f10_active
+```
 
 # Create points shapefile
 
 ## For F10
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f10_pts = st_as_sf(f10_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_thaw_pts = st_as_sf(f10_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_active_pts = st_as_sf(f10_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f10_pts, "../outputs/AdjustedALT/ODonnell_points.shp", driver="ESRI Shapefile")
+st_write(f10_active_pts, "../outputs/ActivePoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f10_thaw_pts, "../outputs/ThawPoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
 ```

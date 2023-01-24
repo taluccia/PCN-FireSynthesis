@@ -64,8 +64,7 @@ f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
 ```{r}
 f15_dates = f15 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
-  mutate(julianDate = yday(date)) %>%
-  drop_na(.)
+  mutate(julianDate = yday(date)) 
 
 f15_dates
 ```
@@ -75,16 +74,29 @@ f15_dates
 f15_dates %>% distinct(julianDate, year, date)
 ```
 
+# Split by active & thaw
+```{r}
+f15_thaw = f15_dates %>% 
+  filter(thaw_active == "T") 
+
+f15_thaw
+
+f15_active = f15_dates %>% 
+  filter(thaw_active == "A") 
+
+f15_active
+```
+
 # Create points shapefile
 
 ## For F15
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f15_pts = st_as_sf(f15_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f15_thaw_pts = st_as_sf(f15_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f15_pts, "../outputs/AdjustedALT/Veraverbeke_points.shp", driver="ESRI Shapefile")
+st_write(f15_thaw_pts, "../outputs/ThawPoints/Veraverbeke_thaw_pts.shp", driver="ESRI Shapefile")
 ```

@@ -93,16 +93,31 @@ f11_dates %>% filter_all(any_vars(is.na(.)))
 f11_dates %>% distinct(julianDate, year, date)
 ```
 
+# Split by active & thaw
+```{r}
+f11_thaw = f11_dates %>% 
+  filter(thaw_active == "T") 
+
+f11_thaw
+
+f11_active = f11_dates %>% 
+  filter(thaw_active == "A") 
+
+f11_active
+```
+
 # Create points shapefile
 
 ## For F11
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f11_pts = st_as_sf(f11_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f11_thaw_pts = st_as_sf(f11_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f11_active_pts = st_as_sf(f11_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f11_pts, "../outputs/AdjustedALT/Olefeldt_points.shp", driver="ESRI Shapefile")
+st_write(f11_thaw_pts, "../outputs/ThawPoints/Olefeldt_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f11_active_pts, "../outputs/ActivePoints/Olefeldt_active_pts.shp", driver="ESRI Shapefile")
 ```
