@@ -150,15 +150,93 @@ F. Multiply thaw depth measure by C
 
 ## For Julian day 117
 ```{r}
-data1 %>%
+jd117 = data1 %>%
   filter(julinDt==117) %>%
 mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
   rowwise() %>% 
     mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010427_mean_2m_air_temperature))))) %>%
-  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 118
+```{r}
+jd118 = data1 %>%
+  filter(julinDt==118) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010428_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 150
+```{r}
+jd150 = data1 %>%
+  filter(julinDt==150) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010530_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 151
+```{r}
+jd151 = data1 %>%
+  filter(julinDt==151) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010531_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
   mutate(C = B/A) %>%
   mutate(adjALT = (thw_dpt*C)) %>%
   dplyr::select(brl_tnd:year, A:adjALT)
 ```
 
 
+## For Julian day 172
+```{r}
+jd172 = data1 %>%
+  filter(julinDt==172) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010621_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 175
+```{r}
+jd175 = data1 %>%
+  filter(julinDt==175) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010624_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+# Combine
+```{r}
+data2 = bind_rows(list(jd117, jd118, jd150, jd151, jd172, jd175))
+```
+
+```{r}
+data3 = data2 %>% dplyr::select(-date)
+```
+
+# Save new data
+```{r}
+write_csv(data3, "../outputs/ThawAdjAlt/ManiesThawAdjAltAug.csv")
+```
