@@ -1,0 +1,243 @@
+---
+title: "Natali ERA5 for Thaw Points"
+author: "Anna Talucci"
+date: '2023-01-25'
+output: html_document
+---
+
+
+
+# Overview
+
+Daily Aggregates https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY
+
+Mean daily air temperature converted from Kelvin to Celsius in earth engine
+
+# Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+# Data 
+
+## Air Temperature
+```{r}
+era5 = read.csv("../data/ERA5forThawPoints/ERA5DailyMeanT2M_Manies.csv")
+```
+
+```{r}
+names(era5)
+```
+
+```{r}
+data1 = era5 %>% 
+  dplyr::select(brl_tnd:year, X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature)
+```
+
+```{r}
+names(data1)
+```
+# Rename Columns?
+
+```{r}
+oldnames = c("X20010401_mean_2m_air_temperature", "X20010402_mean_2m_air_temperature", "X20010403_mean_2m_air_temperature", "X20010404_mean_2m_air_temperature",
+"X20010405_mean_2m_air_temperature", "X20010406_mean_2m_air_temperature",
+"X20010407_mean_2m_air_temperature", "X20010408_mean_2m_air_temperature",
+"X20010409_mean_2m_air_temperature", "X20010410_mean_2m_air_temperature",
+"X20010411_mean_2m_air_temperature", "X20010412_mean_2m_air_temperature",
+"X20010413_mean_2m_air_temperature", "X20010414_mean_2m_air_temperature",
+"X20010415_mean_2m_air_temperature", "X20010416_mean_2m_air_temperature",
+"X20010417_mean_2m_air_temperature", "X20010418_mean_2m_air_temperature",
+"X20010419_mean_2m_air_temperature", "X20010420_mean_2m_air_temperature",
+"X20010421_mean_2m_air_temperature", "X20010422_mean_2m_air_temperature",
+"X20010423_mean_2m_air_temperature", "X20010424_mean_2m_air_temperature",
+"X20010425_mean_2m_air_temperature", "X20010426_mean_2m_air_temperature",
+"X20010427_mean_2m_air_temperature", "X20010428_mean_2m_air_temperature",
+"X20010429_mean_2m_air_temperature", "X20010430_mean_2m_air_temperature",
+"X20010501_mean_2m_air_temperature", "X20010502_mean_2m_air_temperature",
+"X20010503_mean_2m_air_temperature", "X20010504_mean_2m_air_temperature",
+"X20010505_mean_2m_air_temperature", "X20010506_mean_2m_air_temperature",
+"X20010507_mean_2m_air_temperature", "X20010508_mean_2m_air_temperature",
+"X20010509_mean_2m_air_temperature", "X20010510_mean_2m_air_temperature",
+"X20010511_mean_2m_air_temperature", "X20010512_mean_2m_air_temperature",
+"X20010513_mean_2m_air_temperature", "X20010514_mean_2m_air_temperature",
+"X20010515_mean_2m_air_temperature", "X20010516_mean_2m_air_temperature", "X20010517_mean_2m_air_temperature", "X20010518_mean_2m_air_temperature",
+"X20010519_mean_2m_air_temperature", "X20010520_mean_2m_air_temperature",
+"X20010521_mean_2m_air_temperature", "X20010522_mean_2m_air_temperature",
+"X20010523_mean_2m_air_temperature", "X20010524_mean_2m_air_temperature",
+"X20010525_mean_2m_air_temperature", "X20010526_mean_2m_air_temperature",
+"X20010527_mean_2m_air_temperature", "X20010528_mean_2m_air_temperature",
+"X20010529_mean_2m_air_temperature", "X20010530_mean_2m_air_temperature",
+"X20010531_mean_2m_air_temperature", "X20010601_mean_2m_air_temperature",
+"X20010602_mean_2m_air_temperature", "X20010603_mean_2m_air_temperature",
+"X20010604_mean_2m_air_temperature", "X20010605_mean_2m_air_temperature",
+"X20010606_mean_2m_air_temperature", "X20010607_mean_2m_air_temperature",
+"X20010608_mean_2m_air_temperature", "X20010609_mean_2m_air_temperature",
+"X20010610_mean_2m_air_temperature", "X20010611_mean_2m_air_temperature",
+"X20010612_mean_2m_air_temperature", "X20010613_mean_2m_air_temperature",
+"X20010614_mean_2m_air_temperature", "X20010615_mean_2m_air_temperature",
+"X20010616_mean_2m_air_temperature", "X20010617_mean_2m_air_temperature",
+"X20010618_mean_2m_air_temperature", "X20010619_mean_2m_air_temperature",
+"X20010620_mean_2m_air_temperature", "X20010621_mean_2m_air_temperature",
+"X20010622_mean_2m_air_temperature", "X20010623_mean_2m_air_temperature",
+"X20010624_mean_2m_air_temperature", "X20010625_mean_2m_air_temperature",
+"X20010626_mean_2m_air_temperature", "X20010627_mean_2m_air_temperature",
+"X20010628_mean_2m_air_temperature", "X20010629_mean_2m_air_temperature",
+"X20010630_mean_2m_air_temperature", "X20010701_mean_2m_air_temperature",
+"X20010702_mean_2m_air_temperature", "X20010703_mean_2m_air_temperature",
+"X20010704_mean_2m_air_temperature", "X20010705_mean_2m_air_temperature",
+"X20010706_mean_2m_air_temperature", "X20010707_mean_2m_air_temperature",
+"X20010708_mean_2m_air_temperature", "X20010709_mean_2m_air_temperature",
+"X20010710_mean_2m_air_temperature", "X20010711_mean_2m_air_temperature",
+"X20010712_mean_2m_air_temperature", "X20010713_mean_2m_air_temperature",
+"X20010714_mean_2m_air_temperature", "X20010715_mean_2m_air_temperature",
+"X20010716_mean_2m_air_temperature", "X20010717_mean_2m_air_temperature",
+"X20010718_mean_2m_air_temperature", "X20010719_mean_2m_air_temperature",
+"X20010720_mean_2m_air_temperature", "X20010721_mean_2m_air_temperature",  "X20010722_mean_2m_air_temperature", "X20010723_mean_2m_air_temperature",
+"X20010724_mean_2m_air_temperature", "X20010725_mean_2m_air_temperature",
+"X20010726_mean_2m_air_temperature", "X20010727_mean_2m_air_temperature",
+"X20010728_mean_2m_air_temperature", "X20010729_mean_2m_air_temperature",
+"X20010730_mean_2m_air_temperature", "X20010731_mean_2m_air_temperature",
+"X20010801_mean_2m_air_temperature", "X20010802_mean_2m_air_temperature",
+"X20010803_mean_2m_air_temperature", "X20010804_mean_2m_air_temperature",
+"X20010805_mean_2m_air_temperature", "X20010806_mean_2m_air_temperature",
+"X20010807_mean_2m_air_temperature", "X20010808_mean_2m_air_temperature",
+"X20010809_mean_2m_air_temperature", "X20010810_mean_2m_air_temperature", "X20010811_mean_2m_air_temperature", "X20010812_mean_2m_air_temperature",
+"X20010813_mean_2m_air_temperature", "X20010814_mean_2m_air_temperature",
+"X20010815_mean_2m_air_temperature", "X20010816_mean_2m_air_temperature",
+"X20010817_mean_2m_air_temperature", "X20010818_mean_2m_air_temperature",
+"X20010819_mean_2m_air_temperature", "X20010820_mean_2m_air_temperature",
+"X20010821_mean_2m_air_temperature", "X20010822_mean_2m_air_temperature",
+"X20010823_mean_2m_air_temperature", "X20010824_mean_2m_air_temperature",
+"X20010825_mean_2m_air_temperature", "X20010826_mean_2m_air_temperature",
+"X20010827_mean_2m_air_temperature", "X20010828_mean_2m_air_temperature",
+"X20010829_mean_2m_air_temperature", "X20010830_mean_2m_air_temperature",
+"X20010831_mean_2m_air_temperature", "X20010901_mean_2m_air_temperature",
+"X20010902_mean_2m_air_temperature", "X20010903_mean_2m_air_temperature",
+"X20010904_mean_2m_air_temperature", "X20010905_mean_2m_air_temperature",
+"X20010906_mean_2m_air_temperature", "X20010907_mean_2m_air_temperature",
+"X20010908_mean_2m_air_temperature", "X20010909_mean_2m_air_temperature",
+"X20010910_mean_2m_air_temperature", "X20010911_mean_2m_air_temperature",
+"X20010912_mean_2m_air_temperature", "X20010913_mean_2m_air_temperature",
+"X20010914_mean_2m_air_temperature", "X20010915_mean_2m_air_temperature",
+ "X20010916_mean_2m_air_temperature", "X20010917_mean_2m_air_temperature",
+"X20010918_mean_2m_air_temperature", "X20010919_mean_2m_air_temperature",
+"X20010920_mean_2m_air_temperature", "X20010921_mean_2m_air_temperature", "X20010922_mean_2m_air_temperature", "X20010923_mean_2m_air_temperature",  "X20010924_mean_2m_air_temperature", "X20010925_mean_2m_air_temperature", "X20010926_mean_2m_air_temperature", "X20010927_mean_2m_air_temperature", "X20010928_mean_2m_air_temperature", "X20010929_mean_2m_air_temperature", "X20010930_mean_2m_air_temperature")
+```
+oldnames = c("q","e")
+newnames = c("A","B")
+Apr 1  to September 30 (91-273)
+```{r}
+newnames = c("91", "92", "93", "94", "95", "96", "97", "98", "99", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199", "200","201", "202", "203", "204", "205", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219", "220", "221", "222", "223", "224", "225", "226", "227", "228", "229", "230", "231", "232", "233", "234", "235", "236", "237", "238", "239", "240", "241", "242", "243", "244", "245", "246", "247", "248", "249", "250", "251", "252", "253", "254", "255", "256", "257", "258", "259", "260", "261", "262", "263", "264", "265", "266", "267", "268", "269", "270", "271", "272", "273")
+```
+
+```{r}
+data1 %>% rename_at(vars(oldnames), ~ newnames)
+```
+
+```{r}
+unique(data1$julinDt)
+```
+# Calculating ALT
+Active layer depth is the square root of TDD
+ 
+Formula Parts 
+A. Take the square root of the Sum of the total degrees above zero for dates prior to thaw depth measure
+B. Take the square root of the Sum of the total degrees above zero for dates prior to active layer thickness date ()
+
+C. Divide B by A
+F. Multiply thaw depth measure by C
+
+## For Julian day 117
+```{r}
+jd117 = data1 %>%
+  filter(julinDt==117) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010427_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 118
+```{r}
+jd118 = data1 %>%
+  filter(julinDt==118) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010428_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 150
+```{r}
+jd150 = data1 %>%
+  filter(julinDt==150) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010530_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 151
+```{r}
+jd151 = data1 %>%
+  filter(julinDt==151) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010531_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+
+## For Julian day 172
+```{r}
+jd172 = data1 %>%
+  filter(julinDt==172) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010621_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+## For Julian day 175
+```{r}
+jd175 = data1 %>%
+  filter(julinDt==175) %>%
+mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010624_mean_2m_air_temperature))))) %>%
+  mutate(B = sqrt(sum(across(c(X20010401_mean_2m_air_temperature:X20010830_mean_2m_air_temperature))))) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C)) %>%
+  dplyr::select(brl_tnd:year, A:adjALT)
+```
+
+# Combine
+```{r}
+data2 = bind_rows(list(jd117, jd118, jd150, jd151, jd172, jd175))
+```
+
+```{r}
+data3 = data2 %>% dplyr::select(-date)
+```
+
+# Save new data
+```{r}
+write_csv(data3, "../outputs/ThawAdjAlt/ManiesThawAdjAltAug.csv")
+```

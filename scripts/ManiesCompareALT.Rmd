@@ -1,0 +1,93 @@
+---
+title: "Manies Compare ALTs"
+author: "Anna Talucci"
+date: '2023-01-24'
+output: html_document
+---
+
+# Overview
+
+# Packages
+```{r}
+library(tidyverse)
+```
+
+# Data
+```{r}
+adjaltAug = read.csv("../data/ThawAdjAlt/ManiesThawAdjAltAug.csv")
+adjaltSept = read.csv("../data/ThawAdjAlt/ManiesThawAdjAltSept.csv")
+activedata = read.csv("../data/CleanActive/ManiesCleanActive.csv")
+```
+
+
+```{r}
+head(activedata)
+```
+```{r}
+head(activedata)
+```
+
+```{r}
+calculatedALTSept = adjaltSept %>% rename(organic_depth=orgnc_d, ALT=adjALT)
+calculatedALTSept
+```
+
+
+```{r}
+calculatedALTAug = adjaltAug %>% rename(organic_depth=orgnc_d, ALT=adjALT)
+calculatedALTAug
+```
+
+```{r}
+measuredALT = activedata %>% filter(thaw_active=="A") %>% rename(ALT=thaw_depth)
+measuredALT
+```
+# Summarize
+```{r}
+calculatedALT %>% 
+  group_by(site_id, plot_id, julinDt) %>%
+  summarise(meanAlt = mean(ALT),
+            medianALT = median(ALT),
+            minALT = min(ALT),
+            maxALT = max (ALT)) %>%
+  write.csv(.,file = "../outputs/CompareSummarise/ManiesCalculatedSumALT.csv")
+  
+```
+
+
+```{r}
+measuredALT %>% 
+  group_by(site_id, plot_id, julianDate) %>%
+  summarise(meanAlt = mean(ALT),
+            medianALT = median(ALT),
+            minALT = min(ALT),
+            maxALT = max (ALT)) %>%
+  write.csv(.,file = "../outputs/CompareSummarise/ManiesMeasuedSumALT.csv")
+  
+
+
+```
+# Summary plots
+
+```{r}
+ggplot(calculatedALT, aes(x=plot_id, y=ALT, color=julinDt)) + 
+  geom_boxplot() +
+  facet_wrap(~site_id)
+```
+
+# Plot Calculated vs. Measured
+
+```{r}
+ggplot() +
+  geom_point(data = calculatedALTSept, aes(x= organic_depth, y= ALT), color="green", shape=21) +
+  geom_point(data = measuredALT, aes(x= organic_depth, y= ALT), color="purple", shape=21) +
+  facet_wrap(~site_id)
+```
+
+
+```{r}
+ggplot() +
+  geom_point(data = calculatedALTAug, aes(x= organic_depth, y= ALT), color="green", shape=21) +
+  geom_point(data = measuredALT, aes(x= organic_depth, y= ALT), color="purple", shape=21) +
+  facet_wrap(~site_id)
+```
