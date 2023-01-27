@@ -105,6 +105,17 @@ f11_active = f11_dates %>%
 
 f11_active
 ```
+```{r}
+unique(f11_active$date)
+```
+
+```{r}
+unique(f11_thaw$date)
+```
+# Save clean data
+```{r}
+write_csv(f11_active, "../outputs/CleanActive/OlefeldtCleanActive.csv")
+```
 
 # Create points shapefile
 
