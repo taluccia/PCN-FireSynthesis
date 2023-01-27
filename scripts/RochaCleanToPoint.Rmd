@@ -101,6 +101,18 @@ f13_active = f13_dates %>%
 f13_active
 ```
 
+```{r}
+unique(f13_active$date)
+```
+
+```{r}
+unique(f13_thaw$date)
+```
+# Save clean data
+```{r}
+write_csv(f13_active, "../outputs/CleanActive/RochaCleanActive.csv")
+```
+
 # Create points shapefile
 
 ## For F13
