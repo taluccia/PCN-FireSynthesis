@@ -100,6 +100,20 @@ f10_active = f10_dates %>%
 
 f10_active
 ```
+```{r}
+unique(f10_active$date)
+```
+
+```{r}
+unique(f10_thaw$date)
+```
+
+# Save clean data
+```{r}
+write_csv(f10_active, "../outputs/CleanActive/ODonnellCleanActive.csv")
+```
+
+
 
 # Create points shapefile
 
