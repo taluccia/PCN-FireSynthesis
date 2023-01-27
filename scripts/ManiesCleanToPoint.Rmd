@@ -99,6 +99,11 @@ f8_active = f8_dates %>%
 f8_active
 ```
 
+# Save clean data
+```{r}
+write_csv(f8_active, "../outputs/CleanActive/ManiesCleanActive.csv")
+```
+
 # Create points shapefile
 
 ## For F8
