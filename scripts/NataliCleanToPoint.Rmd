@@ -126,12 +126,41 @@ f9_active = f9_dates %>%
 ```
 
 ```{r}
+unique(f9_active$date)
+```
+Aug 2
+Sept 6
+Sept 15, 16, 17, 18, 19
+
+```{r}
+unique(f9_thaw$date)
+```
+
+```{r}
+unique(f9_active$julianDate)
+```
+
+```{r}
+unique(f9_thaw$date)
+```
+
+```{r}
+unique(f9_thaw$julianDate)
+```
+
+```{r}
 f9_active %>% 
   filter(is.na(long))
 
 f9_active %>% 
   filter(is.na(lat))
 ```
+
+# Save clean data
+```{r}
+write_csv(f9_active, "../outputs/CleanActive/NataliCleanActive.csv")
+```
+
 # Create points shapefile
 
 ## For F9
