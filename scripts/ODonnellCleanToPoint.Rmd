@@ -103,6 +103,9 @@ f10_active
 ```{r}
 unique(f10_active$date)
 ```
+```{r}
+unique(f10_active$julianDate)
+```
 
 ```{r}
 unique(f10_thaw$date)
