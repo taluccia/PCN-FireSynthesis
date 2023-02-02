@@ -95,9 +95,9 @@ p1 = ggplot(manies2, aes(x=tempJuldt, y=TempC)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=215, y=-5,label="Aug 3"), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=267, y=-5, label="Sept 24"), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Manies 2005",), colour="grey",  text=element_text(size=7)) 
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=267, y=-5, label="Sept 24"), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 17, label="Manies 2005",), colour="grey",  text=element_text(size=6)) 
 
 p1
 ```
@@ -144,9 +144,9 @@ p2 = ggplot(natali2016_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=214, label="Aug 2", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=259, label="Sept 15", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 19, label="Natali 2016"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=214, label="Aug 2", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=259, label="Sept 15", y=-7), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 20, label="Natali 2016"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Natali 2017
@@ -191,9 +191,9 @@ p3 = ggplot(natali2017_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=214, label="Aug 2", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=259, label="Sept 15", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 20, label="Natali 2017"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=214, label="Aug 2", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=259, label="Sept 15", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 20, label="Natali 2017"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## O'Donnell 2005
@@ -237,9 +237,9 @@ p4 = ggplot(odonnell2005_2, aes(x=tempJuldt, y=TempC)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature  (Celecius)") +
-  geom_text(aes(x=247, label="Sept 3", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=260, label="Sept 17", y=-5), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=175, y= -10, label="O'Donnell 2005"), colour="grey",  text=element_text(size=7)) 
+  geom_text(aes(x=247, label="Sept 3", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=260, label="Sept 17", y=-5), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=175, y= -10, label="O'Donnell 2005"), colour="grey",  text=element_text(size=6)) 
 ```
 
 ## Olefeldt 2015
@@ -281,9 +281,9 @@ p5 = ggplot(olefeldt2015_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=175, y= -10, label="Olefeldt 2015"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=175, y= -10, label="Olefeldt 2015"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Olefeldt 2016
@@ -325,9 +325,9 @@ p6 = ggplot(olefeldt2016_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=175, y= -10, label="Olefeldt 2016"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=175, y= -10, label="Olefeldt 2016"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Olefeldt 2020
@@ -372,9 +372,9 @@ p7 = ggplot(olefeldt2020_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Olefeldt 2020"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Olefeldt 2020"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2008
@@ -416,9 +416,9 @@ p8 = ggplot(Rocha2008_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2008"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2008"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2009
@@ -460,9 +460,9 @@ p9 = ggplot(Rocha2009_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2009"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 17, label="Rocha 2009"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2010
@@ -504,9 +504,9 @@ p10 = ggplot(Rocha2010_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-11), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-11), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2010"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 16, label="Rocha 2010"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2011
@@ -548,9 +548,9 @@ p11 = ggplot(Rocha2011_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2011"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2011"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2012
@@ -592,9 +592,9 @@ p12 = ggplot(Rocha2012_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-12), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-12), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 14, label="Rocha 2012"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-14), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-14), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 14, label="Rocha 2012"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2013
@@ -636,9 +636,9 @@ p13 = ggplot(Rocha2013_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-20), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-20), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2013"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-20), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-20), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2013"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2014
@@ -680,9 +680,9 @@ p14 = ggplot(Rocha2014_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 12, label="Rocha 2014"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 12, label="Rocha 2014"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2015
@@ -724,9 +724,9 @@ p15 = ggplot(Rocha2015_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 17, label="Rocha 2015"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-16), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 19, label="Rocha 2015"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2016
@@ -768,9 +768,9 @@ p16 = ggplot(Rocha2016_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2016"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2016"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2017
@@ -812,9 +812,9 @@ p17 = ggplot(Rocha2017_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2017"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2017"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2018
@@ -856,9 +856,9 @@ p18 = ggplot(Rocha2018_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2018"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust = 0.5, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2018"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2019
@@ -900,9 +900,9 @@ p19 = ggplot(Rocha2019_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2019"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-15), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-15), colour="grey", angle=90, vjust =1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2019"), colour="grey", text=element_text(size=6)) 
 ```
 
 ## Rocha 2020
@@ -944,9 +944,9 @@ p20  = ggplot(Rocha2020_2, aes(x=tempJuldt, y=TempC, color=site_id)) +
   reg_theme +
   xlab("Julian date") +
   ylab("Temperature (Celecius)") +
-  geom_text(aes(x=251, label="Sept 8", y=-5), colour="grey", angle=90, vjust = -0.5, text=element_text(size=6)) +
-  geom_text(aes(x=261, label="Sept 18", y=-5), colour="grey", angle=90, vjust = 0.5, text=element_text(size=6)) + 
-  geom_text(aes(x=120, y= 15, label="Rocha 2020"), colour="grey", text=element_text(size=7)) 
+  geom_text(aes(x=251, label="Sept 8", y=-10), colour="grey", angle=90, vjust = -0.5, text=element_text(size=5)) +
+  geom_text(aes(x=261, label="Sept 18", y=-10), colour="grey", angle=90, vjust = 1, text=element_text(size=5)) + 
+  geom_text(aes(x=120, y= 15, label="Rocha 2020"), colour="grey", text=element_text(size=6)) 
 ```
 
 # Combine plots
