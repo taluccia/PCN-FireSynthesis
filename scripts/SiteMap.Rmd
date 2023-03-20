@@ -1,0 +1,32 @@
+---
+title: "Map"
+author: "Anna Talucci"
+date: "2023-03-20"
+output: html_document
+---
+
+
+
+# Overview
+
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+```
+# Data
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+```
+
+# Maps
+
+```{r}
+ggplot(data = world) +
+    geom_sf() +
+    coord_sf(crs = "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs ")
+```

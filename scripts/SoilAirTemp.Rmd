@@ -1,0 +1,556 @@
+---
+title: "Soil and Air Temperature"
+author: "Anna Talucci"
+date: "2023-03-15"
+output: html_document
+---
+
+# Overview
+
+Notes form email with Mike:
+Regarding the date - I think the approach you describe using climate data probably makes sense, though the maximum may be reached before mean temps drop below freezing. This paper indicates that max thaw occurs during the last two weeks in August in Utqiagvik, and I think average temps are still above freezing at this point. In my limited experience in Cherskiy, thaw depth tends to plateau around early Sept when temps are still above freezing as well. It might be the case that max thaw occurs roughly when air and soil temps are approximately similar, and once air temps get lower there can be bottom-up freezing as the soil loses heat to the atmosphere. In Cherskiy soil temps never typically do not exceed 4C. Sorry, but of a stream of consciousness here. 
+# Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+# Graph theme
+```{r}
+
+reg_theme = theme_bw() + theme(legend.position = "bottom") +
+  theme(plot.margin = unit(c(t = 0.3, r = 0.3, b = 0.3, l = 0.1), "cm")) +
+  theme(axis.title.x = element_text(size = 11, hjust = 0.5, vjust = -0.1),
+        axis.title.y = element_text(size = 11, hjust = 0.5, vjust = 1.1),
+        axis.text.x = element_text(size = 10, color = "black"),
+        axis.text.y = element_text(size = 10, color = "black"),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))
+
+```
+
+# Data 
+
+```{r}
+soil = read.csv("../data/soilAirTemp/soil_temp.csv")
+air = read.csv("../data/soilAirTemp/air_temp.csv")
+```
+
+
+```{r}
+head(soil)
+head(air)
+```
+
+```{r}
+unique(soil$site_id)
+unique(air$site_id)
+```
+```{r}
+unique(soil$st_depth)
+
+```
+# filter some specifics
+```{r}
+(
+  x = soil %>% filter(site_id == 104) 
+)
+
+unique(x$st_depth)
+```
+
+```{r}
+(
+  soil1 = soil %>% filter(st_depth == 0) %>% drop_na()
+)
+```
+```{r}
+unique(soil1$site_id)
+```
+12	63.291974	-129.838532 5
+16	63.314262	-129.790731	5
+15	63.400222	-129.665567	5
+13	63.266397	-130.100634	5
+17	58.727161	-93.836367	5
+18	58.732721	-93.805305	5
+19	57.47799	-93.24227	  5
+20	58.750521	-93.855696	5
+14	63.266653	-130.097406	5
+100	77.4915	-69.401972	  20
+190	69.253333	-53.513889	25
+```{r}
+soil %>% filter(site_id ==29) %>% filter(doy_st %in% (200:300)) 
+```
+
+```{r}
+soil %>% 
+  filter(site_id ==13) %>%  
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (235:270))
+```
+
+# Plots
+## Site 104
+```{r}
+soil104 = soil %>% 
+  filter(site_id ==104) %>% 
+  filter(st_depth == 4) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air109 = air %>% 
+  filter(site_id ==109) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+
+  stat_summary(aes(y = soil_t,group=1), fun.y=mean, colour="#2c7bb6", geom="line",group=1) +
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil109, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air109, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + 
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 20, label="Soil Temperature\n @ depth 4cm\n(68.31, 161.35)"), colour = "black") 
+
+
+```
+
+## Site 109
+```{r}
+soil109 = soil %>% 
+  filter(site_id ==109) %>% 
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air109 = air %>% 
+  filter(site_id ==109) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+
+  stat_summary(aes(y = soil_t,group=1), fun.y=mean, colour="#2c7bb6", geom="line",group=1) +
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil109, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air109, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + 
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 20, label="Soil Temperature\n @ depth 20cm\n(66.83, 65.98)"), colour = "black") 
+
+
+```
+## Site 12
+```{r}
+soil12 = soil %>% 
+  filter(site_id ==12) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air12 = air %>% 
+  filter(site_id ==12) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+
+  stat_summary(aes(y = soil_t,group=1), fun.y=mean, colour="#2c7bb6", geom="line",group=1) +
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil12, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air12, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + 
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(63.291974, -129.838532)"), colour = "black") 
+
+
+```
+
+## Site 13
+
+```{r}
+soil13 = soil %>% 
+  filter(site_id ==13) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air13 = air %>% 
+  filter(site_id ==13) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil13, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air13, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(63.266397, -130.100634)"), colour = "black") 
+
+
+```
+
+
+## Site 14
+```{r}
+soil14 = soil %>% 
+  filter(site_id ==14) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air14 = air %>% 
+  filter(site_id ==14) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil14, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air14, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(63.266653, -130.097406)"), colour = "black") 
+
+
+```
+
+
+## Site 15
+```{r}
+soil15 = soil %>% 
+  filter(site_id ==15) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air15 = air %>% 
+  filter(site_id ==15) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil15, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air15, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(63.400222, -129.665567)"), colour = "black") 
+
+
+```
+
+## Site 16
+```{r}
+soil16 = soil %>% 
+  filter(site_id ==16) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air16 = air %>% 
+  filter(site_id ==16) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil16, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air16, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(63.314262, -129.790731)"), colour = "black") 
+
+
+```
+
+
+## Site 17
+```{r}
+soil17 = soil %>% 
+  filter(site_id ==17) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air17 = air %>% 
+  filter(site_id ==17) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil17, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air17, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(58.727161, -93.836367)"), colour = "black") 
+
+
+```
+
+## Site 18
+```{r}
+soil18 = soil %>% 
+  filter(site_id ==18) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air18 = air %>% 
+  filter(site_id ==18) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil18, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air18, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(58.732721, -93.805305)"), colour = "black") 
+
+
+```
+
+
+## Site 19
+```{r}
+soil19 = soil %>% 
+  filter(site_id ==19) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air19 = air %>% 
+  filter(site_id ==19) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil19, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air19, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(57.47799, -93.24227)"), colour = "black") 
+
+
+```
+
+
+
+## Site 20
+```{r}
+soil20 = soil %>% 
+  filter(site_id ==20) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air20 = air %>% 
+  filter(site_id ==20) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil20, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air20, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(58.750521, -93.855696)"), colour = "black") 
+
+
+```
+
+## Site 100
+```{r}
+soil100 = soil %>% 
+  filter(site_id ==100) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air100 = air %>% 
+  filter(site_id ==100) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil100, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air100, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(77.4915, -69.401972	)"), colour = "black") 
+
+
+```
+
+## Site 190
+```{r}
+soil190 = soil %>% 
+  filter(site_id ==190) %>% 
+  filter(st_depth == 0) %>%
+  filter(doy_st %in% (200:285)) %>%
+  group_by(doy_st) %>%
+  summarize(mean_soil_t = mean(soil_t))
+
+air190 = air %>% 
+  filter(site_id ==190) %>% 
+  filter(doy_ai %in% (200:285)) %>%
+  group_by(doy_ai) %>%
+  summarize(mean_air_t = mean(air_t))
+
+```
+```{r}
+
+  ggplot()  +
+  geom_line(data = soil190, aes(x=doy_st, y=mean_soil_t),color="#2c7bb6") +
+  geom_line(data = air190, aes(x=doy_ai, y=mean_air_t),color = "#abdda4") +
+  geom_vline(xintercept=215, colour = "#fdae61") + # Aug 3
+  geom_vline(xintercept=260, colour="#fdae61") + #Sept 24
+  geom_hline(yintercept=0, colour="#d7191c") + #Sept 24
+  geom_hline(yintercept=4, colour="#d7191c") + #Sept 24
+  reg_theme +
+  xlab("Julian date") +
+  ylab("Mean Air Temperature (Celecius)") +
+  geom_text(aes(x=215, y=-5,label="Aug 3"), colour = "black", angle=90, vjust = -0.5, size=2) +
+  geom_text(aes(x=260, y=-5, label="Sept 17"),colour = "black", angle=90, vjust = -0.5, size=2) + 
+  geom_text(aes(x=240, y= 10, label="Soil Temperature\n(69.253333, -53.513889)"), colour = "black") 
+
+
+```
