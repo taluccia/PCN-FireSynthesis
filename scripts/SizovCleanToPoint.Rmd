@@ -94,10 +94,12 @@ f14_active
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f14_active_pts = st_as_sf(f14_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f14_pts = st_as_sf(f14_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
 st_write(f14_active_pts, "../outputs/ActivePoints/Sizov_active_pts.shp", driver="ESRI Shapefile")
+st_write(f14_pts, "../outputs/allPoints/Sizov_pts.shp", driver="ESRI Shapefile")
 ```

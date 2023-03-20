@@ -111,6 +111,7 @@ sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f8_thaw_pts = st_as_sf(f8_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 f8_active_pts = st_as_sf(f8_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f8_pts = st_as_sf(f8_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
@@ -118,4 +119,5 @@ f8_active_pts = st_as_sf(f8_active, coords = c("long","lat"), crs = 4326, remove
 ```{r}
 st_write(f8_thaw_pts, "../outputs/ThawPoints/Manies_thaw_pts.shp", driver="ESRI Shapefile")
 st_write(f8_active_pts, "../outputs/ActivePoints/Manies_active_pts.shp", driver="ESRI Shapefile")
+st_write(f8_pts, "../outputs/allPoints/Manies_pts.shp", driver="ESRI Shapefile")
 ```

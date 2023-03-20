@@ -22,7 +22,11 @@ library(rnaturalearthdata)
 world <- ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 ```
+## Points
 
+```{r}
+paulson = st_read("../data/ThawPoints/Paulson_thaw_pts.shp", "Paulson_thaw_pts"))
+```
 # Maps
 
 ```{r}

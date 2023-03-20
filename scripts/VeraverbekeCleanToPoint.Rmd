@@ -76,15 +76,23 @@ f15_dates %>% distinct(julianDate, year, date)
 
 # Split by active & thaw
 ```{r}
-f15_thaw = f15_dates %>% 
+(
+  f15_all = f15_dates %>% 
+  drop_na(long) %>%
+  drop_na(lat)
+)
+
+( 
+  f15_thaw = f15_dates %>% 
   filter(thaw_active == "T") 
+)
 
-f15_thaw
 
-f15_active = f15_dates %>% 
+
+(
+  f15_active = f15_dates %>% 
   filter(thaw_active == "A") 
-
-f15_active
+)
 ```
 
 # Create points shapefile
@@ -93,10 +101,13 @@ f15_active
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f15_thaw_pts = st_as_sf(f15_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f15_pts = st_as_sf(f15_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
 st_write(f15_thaw_pts, "../outputs/ThawPoints/Veraverbeke_thaw_pts.shp", driver="ESRI Shapefile")
+
+st_write(f15_pts, "../outputs/allPoints/Veraverbeke_pts.shp", driver="ESRI Shapefile")
 ```

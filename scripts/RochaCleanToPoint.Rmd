@@ -120,6 +120,8 @@ sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f13_thaw_pts = st_as_sf(f13_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 f13_active_pts = st_as_sf(f13_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+
+f13_pts = st_as_sf(f13_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
@@ -127,4 +129,5 @@ f13_active_pts = st_as_sf(f13_active, coords = c("long","lat"), crs = 4326, remo
 ```{r}
 st_write(f13_thaw_pts, "../outputs/ThawPoints/Rocha_thaw_pts.shp", driver="ESRI Shapefile")
 st_write(f13_active_pts, "../outputs/ActivePoints/Rocha_active_pts.shp", driver="ESRI Shapefile")
+st_write(f13_pts, "../outputs/allPoints/Rocha_pts.shp", driver="ESRI Shapefile")
 ```

@@ -125,6 +125,7 @@ sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f10_thaw_pts = st_as_sf(f10_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 f10_active_pts = st_as_sf(f10_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_pts = st_as_sf(f10_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
@@ -132,4 +133,5 @@ f10_active_pts = st_as_sf(f10_active, coords = c("long","lat"), crs = 4326, remo
 ```{r}
 st_write(f10_active_pts, "../outputs/ActivePoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
 st_write(f10_thaw_pts, "../outputs/ThawPoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f10_pts, "../outputs/allPoints/ODonnell_pts.shp", driver="ESRI Shapefile")
 ```

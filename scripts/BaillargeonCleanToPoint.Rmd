@@ -127,11 +127,19 @@ f1_active
 ## For F1
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
+f1_pts = st_as_sf(f1_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+```{r}
 f1_thaw_pts = st_as_sf(f1_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(f1_thaw_pts, "../outputs/ThawPoints/Baillargeon_thaw_pts.shp", driver="ESRI Shapefile")
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(f1_pts, "../outputs/allPoints/Baillargeon_pts.shp", driver="ESRI Shapefile")
 ```

@@ -99,8 +99,16 @@ sf::st_as_sf(dd, coords = c("x","y"))
 f5_active_pts = st_as_sf(f5_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
+```{r}
+f5_pts = st_as_sf(f5_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
 
 ### write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(f5_active_pts, "../outputs/ActivePoints/Douglas_active_pts.shp", driver="ESRI Shapefile")
+```
+
+```{r}
+st_write(f5_pts, "../outputs/allPoints/Douglas_pts.shp", driver="ESRI Shapefile")
 ```

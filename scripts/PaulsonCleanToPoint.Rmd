@@ -101,10 +101,15 @@ f12_active
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f12_thaw_pts = st_as_sf(f12_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f12_pts = st_as_sf(f12_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(f12_thaw_pts, "../outputs/ThawPoints/Paulson_thaw_pts.shp", driver="ESRI Shapefile")
+```
+
+```{r}
+st_write(f12_pts, "../outputs/allPoints/Paulson_pts.shp", driver="ESRI Shapefile")
 ```

@@ -107,8 +107,15 @@ sf::st_as_sf(dd, coords = c("x","y"))
 f6_thaw_pts = st_as_sf(f6_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
+```{r}
+f6_pts = st_as_sf(f6_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
 
 ### write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(f6_thaw_pts, "../outputs/ThawPoints/Frost_thaw_pts.shp", driver="ESRI Shapefile")
+```
+
+```{r}
+st_write(f6_pts, "../outputs/allPoints/Frost_pts.shp", driver="ESRI Shapefile")
 ```

@@ -114,6 +114,10 @@ f9_dates %>% filter_all(any_vars(is.na(.)))
 
 # Split by active & thaw
 ```{r}
+f9_all = f9_dates %>% 
+  drop_na(long) %>%
+  drop_na(lat)
+
 f9_thaw = f9_dates %>% 
   filter(thaw_active == "T") %>%
   drop_na(long) %>%
@@ -168,6 +172,7 @@ sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f9_thaw_pts = st_as_sf(f9_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
 f9_active_pts = st_as_sf(f9_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f9_pts = st_as_sf(f9_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
@@ -175,4 +180,5 @@ f9_active_pts = st_as_sf(f9_active, coords = c("long","lat"), crs = 4326, remove
 ```{r}
 st_write(f9_thaw_pts, "../outputs/ThawPoints/Natali_thaw_pts.shp", driver="ESRI Shapefile")
 st_write(f9_active_pts, "../outputs/ActivePoints/Natali_active_pts.shp", driver="ESRI Shapefile")
+st_write(f9_pts, "../outputs/allPoints/Natali_pts.shp", driver="ESRI Shapefile")
 ```

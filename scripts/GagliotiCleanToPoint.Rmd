@@ -106,8 +106,16 @@ sf::st_as_sf(dd, coords = c("x","y"))
 f7_active_pts = st_as_sf(f7_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
+```{r}
+f7_pts = st_as_sf(f7_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
 
 ### write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(f7_active_pts, "../outputs/ActivePoints/Gaglioti_active_pts.shp", driver="ESRI Shapefile")
+```
+
+```{r}
+st_write(f7_pts, "../outputs/allPoints/Gaglioti_pts.shp", driver="ESRI Shapefile")
 ```

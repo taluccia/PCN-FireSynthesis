@@ -111,7 +111,11 @@ f4_pts = st_as_sf(f4_dates, coords = c("long","lat"), crs = 4326, remove = FALSE
 ```
 
 
+
 ### write to shapefile
+```{r eval=FALSE, include=FALSE}
+st_write(f4_pts, "../outputs/AdjustedALT/Dielman_pts.shp", driver="ESRI Shapefile")
+```
 ```{r}
-st_write(f4_pts, "../outputs/AdjustedALT/Veraverbeke_points.shp", driver="ESRI Shapefile")
+st_write(f4_pts, "../outputs/allPoints/Dielman_pts.shp", driver="ESRI Shapefile")
 ```
