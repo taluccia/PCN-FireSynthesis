@@ -4,7 +4,10 @@ author: "Anna Talucci"
 date: "2023-03-20"
 output: html_document
 ---
-
+# clear environment
+```{r}
+rm(list=ls())
+```
 
 
 # Overview
@@ -15,22 +18,228 @@ library(tidyverse)
 library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(RColorBrewer)
+```
+# Projection
+```{r}
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
 ```
 # Data
 
-```{r}
-world <- ne_countries(scale = "medium", returnclass = "sf")
-class(world)
-```
+
 ## Points
 
 ```{r}
-paulson = st_read("../data/ThawPoints/Paulson_thaw_pts.shp", "Paulson_thaw_pts"))
+points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
+```
+
+# Data
+
+## World map
+https://datacatalog.worldbank.org/dataset/world-bank-official-boundaries
+
+```{r}
+wrld = st_read("../data/shapefiles/world/WB_countries_Admin0_10m.shp", "WB_countries_Admin0_10m")
+```
+
+
+## permafrost
+```{r}
+permafrost = st_read("../data/shapefiles/permafrost/permaice.shp", "permaice")
+```
+
+```{r}
+head(permafrost)
+```
+
+# Arctic Circle 
+Arctic Circle shapefile came from [Natural Earth](https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-geographic-lines/)
+
+```{r}
+circle = st_read("../data/ne_110m_geographic_lines/ne_110m_geographic_lines.shp", "ne_110m_geographic_lines") 
+```
+```{r}
+arctic = circle %>% filter(name=="Arctic Circle")
+```
+
+
+
+
+# Filter
+## Countries
+
+```{r}
+unique(wrld$CONTINENT)
+```
+
+
+```{r}
+target_cnty = c("Mongolia", "Kazakhstan", "Japan", "People's Republic of China", "Russia", "Uzbekistan", "Canada", "Greenland", "United States of America", "Czech Republic", "Germany", "Estonia", "Latvia", "Norway", "Sweden", "Finland", "Denmark",         "Romania",                             
+ "Hungary",                              "Slovakia",                             "Poland",                              
+"Ireland",                              "United Kingdom",                       "Greece",                              
+ "Austria" )
+```
+
+```{r}
+target_iso = c("MN", "RU", "CN", "KZ", "KG", "UZ", "JP", "TM")
+```
+
+```{r}
+target = c("Asia", "Europe", "North America")
+```
+
+Filter for all
+```{r}
+nh  = wrld %>% 
+  filter(CONTINENT %in% target) %>%
+  dplyr::select( OBJECTID:FORMAL_EN, NAME_EN, ISO_A2, CONTINENT:REGION_WB, Shape_Leng:geometry) 
+```
+
+```{r}
+unique(nh$NAME_EN)
+```
+
+```{r}
+nh
+```
+
+## Permafrost
+```{r}
+perma_con = permafrost %>% 
+  filter(EXTENT =="C") 
+```
+
+```{r}
+perma_dis = permafrost %>% 
+  filter(EXTENT =="D") 
+```
+
+```{r}
+perma_spo = permafrost %>% 
+  filter(EXTENT =="S") 
+```
+
+```{r}
+permafrost1 = permafrost %>% 
+  filter(EXTENT %in% c("C", "D", "S")) 
+```
+
+# Reproject
+
+```{r}
+nh_pp = st_transform(nh, crs = polarProj)
+
+points_pp = st_transform(points, crs = polarProj)
+artic_pp = st_transform(arctic, crs = polarProj)
+perma_pp = st_transform(perma_con, crs = polarProj)
+perma_dis_pp = st_transform(perma_dis, crs = polarProj)
+perma_spo_pp = st_transform(perma_spo, crs = polarProj)
+permafrost1_pp = st_transform(permafrost1, crs = polarProj)
+```
+
+
+
+```{r}
+nh_pp
+```
+
+```{r}
+nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
+                                    ymin = 45, ymax = 90)
+```
+
+```{r}
+points_pp
+```
+```{r}
+pts_palette = c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+
+```{r}
+brewer.pal(12, "Paired")
+```
+
+```{r}
+permafrost_palette = c('#71A6D1', '#99C4E1', '#C0E2F0')
+```
+xlim = c(-3302324, 2312498), ylim = c(-1108650,  3102452) 
+ymin: -25426070 xmax: 28628080 ymax: 8108557
+ xmin:  ymin:  xmax:  ymax: 
+ 
+ scale_color_manual(values = c("A" ="#fdae61","B" = "#ff6347", "C" = "#fee08b"), labels = c( "A" ="Tweedsmuir fire","B" = "Entiako fire", "C" = "Chelaslie fire" ), name = "Fire perimeters") +
+# Map
+```{r fig.height=5, fig.width=6}
+sa_map <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#C0C0C0", colour="#A9AB9D") +
+    geom_sf(data = perma_pp, fill = "#dcf3ff", colour= NA) +
+  geom_sf(data = perma_dis_pp, fill = "#98eff9", colour= NA) +
+  geom_sf(data = perma_spo_pp, fill = "#d7e8ed", colour= NA) +
+ 
+   geom_sf(data = points_pp, aes(colour= last_nm)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=pts_palette) +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) 
+sa_map
+```
+
+```{r fig.height=5, fig.width=6}
+(
+  map1 <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA) +
+ 
+   geom_sf(data = points_pp, aes(colour= last_nm)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=pts_palette) +
+    scale_fill_manual(values = permafrost_palette) +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) 
+)
+```
+
+```{r}
+ggsave("../figures/PCNSiteMap.png", plot = map1, dpi = 600)
 ```
 # Maps
 
 ```{r}
-ggplot(data = world) +
-    geom_sf() +
+ggplot() +
+    geom_sf(data = world) +
+    geom_sf(data=paulson) +
     coord_sf(crs = "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs ")
+```
+
+# Set Zoom level
+```{r}
+zoom_to <- c(135, 90)  # ~ center of Kamchatka
+zoom_level <- 2.5
+# Lambert azimuthal equal-area projection around center of interest
+target_crs <- sprintf("+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
+                      zoom_to[1], zoom_to[2])
+
+```
+                      
+```{r}
+C <- 40075016.686   # ~ circumference of Earth in meters
+x_span <- C / 2^zoom_level
+y_span <- C / 2^(zoom_level+1)
+```
+
+```{r}
+zoom_to_xy <- st_transform(st_sfc(st_point(zoom_to), crs = 4326),
+                           crs = target_crs)
+zoom_to_xy
+```
+
+```{r}
+disp_window <- st_sfc(
+    st_point(st_coordinates(zoom_to_xy - c(x_span / 2, y_span / 2))),
+    st_point(st_coordinates(zoom_to_xy + c(x_span / 2, y_span / 2))),
+    crs = target_crs
+)
 ```
