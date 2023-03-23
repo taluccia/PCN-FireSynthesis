@@ -102,6 +102,10 @@ There are 732 measurements as thaw depth from site_id YKD
 f9_dates %>% filter(thaw_active == "T")
 ```
 ```{r}
+f9_dates %>% filter(long > 0)
+```
+
+```{r}
 f9_dates %>% filter(site_id =="YKD")
 ```
 
