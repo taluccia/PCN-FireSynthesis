@@ -1,0 +1,56 @@
+---
+title: "Natalie Standardize"
+author: "Anna Talucci"
+date: "2023-03-22"
+output: html_document
+---
+
+# Overview
+
+Daily Aggregates https://developers.google.com/earth-engine/datasets/catalog/ECMWF_ERA5_DAILY
+
+Mean daily air temperature converted from Kelvin to Celsius in earth engine
+
+Standardize Min date August 31
+Standarize Max data September 15
+
+# Packages
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+# Data 
+
+## Air Temperature
+```{r}
+natali2017 = read.csv("../data/ERA5forThawPoints/2017ERA5DailyMeanT2M_NataliSept30.csv")
+natali2016 = read.csv("../data/ERA5forThawPoints/2016ERA5DailyMeanT2M_NataliSept30.csv")
+```
+
+```{r}
+head(natali2017)
+head(natali2016)
+```
+```{r}
+colnames(natali2017)
+```
+
+```{r}
+colnames(natali2016)
+```
+
+```{r}
+natali2017 %>% 
+  dplyr::select(-system.index, -.geo) %>%
+  #Subset temp columns specifc to julian dates of interest 
+  #filter by julian date 
+  mutate_at(vars(matches("mean_2m_air_temperature")), ~ifelse(.<=0, 0,.)) %>% 
+  rowwise() %>% 
+    mutate(A= sum(across(c(X20170401_mean_2m_air_temperature:X20170730_mean_2m_air_temperature)))) %>%
+  mutate(B = sum(across(c(X20170401_mean_2m_air_temperature:X20170929_mean_2m_air_temperature)))) %>%
+  mutate(sqrtA = sqrt(A)) %>%
+  mutate(sqrtB = sqrt(B)) %>%
+  mutate(C = B/A) %>%
+  mutate(adjALT = (thw_dpt*C))
+```

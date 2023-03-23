@@ -1,0 +1,156 @@
+---
+title: "Combine all point files for mapping"
+author: "Anna Talucci"
+date: "2023-03-22"
+output: html_document
+---
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+```
+
+# Data
+```{r}
+f01 = st_read("../data/allPoints/Baillargeon_pts.shp", "Baillargeon_pts") 
+f02 = st_read("../data/allPoints/Buma_pts.shp", "Buma_pts") 
+f03 = st_read("../data/allPoints/Dielman_pts.shp", "Dielman_pts") 
+f04 = st_read("../data/allPoints/Douglas_pts.shp", "Douglas_pts") 
+f05 = st_read("../data/allPoints/Frost_pts.shp", "Frost_pts") 
+f06 = st_read("../data/allPoints/Gaglioti_pts.shp", "Gaglioti_pts") 
+f07 = st_read("../data/allPoints/Manies_pts.shp", "Manies_pts") 
+f08 = st_read("../data/allPoints/Natali_pts.shp", "Natali_pts") 
+f09 = st_read("../data/allPoints/ODonnell_pts.shp", "ODonnell_pts") 
+f10 = st_read("../data/allPoints/Olefeldt_pts.shp", "Olefeldt_pts") 
+f11 = st_read("../data/allPoints/Paulson_pts.shp", "Paulson_pts")
+f12 = st_read("../data/allPoints/Rocha_pts.shp", "Rocha_pts") 
+f13 = st_read("../data/allPoints/Sizov_pts.shp", "Sizov_pts") 
+f14 = st_read("../data/allPoints/Veraverbeke_pts.shp", "Veraverbeke_pts") 
+```
+
+# Check columns names
+```{r}
+colnames(f01)
+```
+
+```{r}
+colnames(f02)
+```
+f02 has added columns "fire_d1"  "fr_yr_1"  "fire_d2"  "fr_yr_2"  "fire_d3"  "fr_yr_3" 
+```{r}
+colnames(f03)
+```
+```{r}
+colnames(f04)
+
+```
+```{r}
+colnames(f05)
+```
+```{r}
+colnames(f06)
+```
+```{r}
+colnames(f07)
+```
+```{r}
+colnames(f08)
+```
+```{r}
+colnames(f09)
+```
+```{r}
+colnames(f10)
+```
+f10 is missing "fire_id"
+```{r}
+colnames(f11)
+```
+
+```{r}
+colnames(f12)
+```
+```{r}
+colnames(f13)
+```
+```{r}
+colnames(f14)
+```
+
+
+# drop fire_id
+Remove fire_id as some are character and some are integer
+```{r}
+f01 = f01 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f02 = f02 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+```
+
+```{r}
+f03 = f03 %>% 
+  dplyr::select(-fire_id, -year, -month, -day) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+```
+
+```{r}
+f04 = f04 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f05 = f05 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+```
+```{r}
+f06 = f06 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f07 = f07 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f08 = f08 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f09 = f09 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f10 = f10 %>% dplyr::select(-year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f11 = f11 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f12 = f12 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f13 = f13 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+f14 = f14 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
+  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+```
+
+
+
+# Combine all shapefiles
+```{r}
+all_pts = dplyr::bind_rows(f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14)
+```
+
+# Look at combined data
+```{r}
+head(all_pts)
+```
+
+```{r}
+tail(all_pts)
+```
+
+```{r}
+all_pts
+```
+
+
+
+# write to check data
+```{r eval=FALSE, include=FALSE}
+st_write(all_pts, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
+```
