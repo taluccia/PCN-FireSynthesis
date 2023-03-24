@@ -33,7 +33,9 @@ polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WG
 points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
 ```
 
-# Data
+```{r}
+sumpts = st_read("../data/allPoints/SumAllPts.shp", "SumAllPts")
+```
 
 ## World map
 https://datacatalog.worldbank.org/dataset/world-bank-official-boundaries
@@ -128,7 +130,7 @@ permafrost1 = permafrost %>%
 
 ```{r}
 nh_pp = st_transform(nh, crs = polarProj)
-
+sumpts_pp = st_transform(sumpts, crs = polarProj)
 points_pp = st_transform(points, crs = polarProj)
 artic_pp = st_transform(arctic, crs = polarProj)
 perma_pp = st_transform(perma_con, crs = polarProj)
@@ -152,7 +154,7 @@ nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
 points_pp
 ```
 ```{r}
-pts_palette = c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+lastnm_palette = c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
 ```
 
 ```{r}
@@ -161,6 +163,10 @@ brewer.pal(12, "Paired")
 
 ```{r}
 permafrost_palette = c('#71A6D1', '#99C4E1', '#C0E2F0')
+```
+
+```{r}
+brltnd_palette = c('#4a6741', '#3d3021')
 ```
 xlim = c(-3302324, 2312498), ylim = c(-1108650,  3102452) 
 ymin: -25426070 xmax: 28628080 ymax: 8108557
@@ -177,7 +183,7 @@ sa_map <- ggplot() +
  
    geom_sf(data = points_pp, aes(colour= last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
-  scale_color_manual(values=pts_palette) +
+  scale_color_manual(values=lastnm_palette) +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
@@ -189,12 +195,36 @@ sa_map
 (
   map1 <- ggplot() +
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
-    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA) +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
  
    geom_sf(data = points_pp, aes(colour= last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
-  scale_color_manual(values=pts_palette) +
-    scale_fill_manual(values = permafrost_palette) +
+  scale_color_manual(values=lastnm_palette, name="Data contributor") +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + theme(legend.key=element_blank())
+)
+```
+
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNSiteMap.png", plot = map1, dpi = 600)
+```
+# Map 2 with Summarized sites and colored for Tundra/Boreal
+shape = 21, colour = "black", fill = "white", 
+```{r fig.height=5, fig.width=6}
+(
+  map2 <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA) +
+ 
+   geom_sf(data = sumpts_pp, aes(colour= brl_tnd)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=brltnd_palette, name="Biome") +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
@@ -202,19 +232,17 @@ sa_map
 )
 ```
 
-```{r}
-ggsave("../figures/PCNSiteMap.png", plot = map1, dpi = 600)
-```
-# Maps
 
-```{r}
-ggplot() +
-    geom_sf(data = world) +
-    geom_sf(data=paulson) +
-    coord_sf(crs = "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs ")
-```
 
-# Set Zoom level
+
+
+
+
+
+
+
+# Unused
+## Set Zoom level
 ```{r}
 zoom_to <- c(135, 90)  # ~ center of Kamchatka
 zoom_level <- 2.5
