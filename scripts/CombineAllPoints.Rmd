@@ -154,3 +154,80 @@ all_pts
 ```{r eval=FALSE, include=FALSE}
 st_write(all_pts, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
 ```
+
+# Create summarized points by site for map
+
+```{r}
+unique(all_pts$site_id)
+```
+```{r}
+unique(all_pts$brn_nbr)
+```
+```{r}
+unique(all_pts$brl_tnd)
+```
+new_data <- data %>% filter_all(any_vars(is.na(.))) 
+```{r}
+all_pts %>% 
+  dplyr::select(last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, brn_nbr, geometry) %>%
+  st_set_geometry(NULL) %>% filter_all(any_vars(is.na(.))) 
+```
+
+```{r}
+all_pts %>% filter(last_nm =="Delcourt-Veraverbeke")
+```
+
+
+```{r}
+all_pts %>% 
+  dplyr::select(last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr, brn_nbr, geometry) %>%
+  st_set_geometry(NULL) %>%
+  mutate(id = row_number()) %>%
+  mutate(n=as.integer(1)) %>%
+  filter(last_nm =="Delcourt-Veraverbeke") %>%
+  pivot_wider( names_from = brn_nbr, values_from = n, id_cols = c(id, last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr)) %>%
+  mutate(across(c(burned, unburned), ~coalesce(., 0))) %>%
+  group_by(last_nm, brl_tnd, site_id) %>%
+  summarize( lat = mean(lat),
+             long = mean(long),
+             burned = sum(burned),
+             unburned = sum(unburned))
+```
+
+# Summarize all points
+"tundra" "boreal" "T"      "B"  
+```{r}
+(
+  sum_all_pts = all_pts %>% 
+  dplyr::select(last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr, brn_nbr, geometry) %>%
+  st_set_geometry(NULL) %>%
+  mutate(id = row_number()) %>%
+  mutate(n=as.integer(1)) %>%
+  mutate(brl_tnd = recode_factor(brl_tnd, B = "boreal", boreal = "boreal", "T" = "tundra", tundra = "tundra")) %>%
+  mutate(brn_nbr = recode_factor(brn_nbr, burned = "burned", burn = "burned", Burned = "burned", Burn = "burned", '72burn' = "burned", Unburn = 'unburned', unburn = 'unburned', unburned = 'unburned')) %>%
+  group_by(id) %>%
+  pivot_wider( names_from = brn_nbr, values_from = n, id_cols = c(id, last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr)) %>%
+  mutate(across(c(burned, unburned), ~coalesce(., 0))) %>%
+  group_by(last_nm, brl_tnd, site_id) %>%
+  summarize( lat = mean(lat),
+             long = mean(long),
+             burned = sum(burned),
+             unburned = sum(unburned)) %>%
+  mutate(total = burned + unburned) %>%
+  mutate(propBurn = burned/total)
+)
+
+ 
+
+```
+
+## back to shapefile
+```{r}
+sum_all_pts_sf = st_as_sf(sum_all_pts, coords = c("long","lat"), crs = 4326, remove = FALSE)
+```
+
+# write to shapefile
+```{r}
+st_write(sum_all_pts_sf, "../outputs/allPoints/SumAllPts.shp", driver="ESRI Shapefile")
+```
+
