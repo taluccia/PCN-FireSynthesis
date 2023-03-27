@@ -1,0 +1,73 @@
+---
+title: "ERA5 Data Organization"
+author: "Anna Talucci"
+date: "2023-03-25"
+output: html_document
+---
+
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+ERA 5 data from google earth engine
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+
+
+
+# Data
+
+## vector of data files
+```{r}
+f <- list.files(path = "../data/ERA5Data/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+## Individual files
+```{r}
+f1 <- read.csv(f[1], header = TRUE) 
+f2 <- read.csv(f[2], header = TRUE) 
+f3 <- read.csv(f[3], header = TRUE) 
+f4 <- read.csv(f[4], header = TRUE) 
+f5 <- read.csv(f[5], header = TRUE) 
+f6 <- read.csv(f[6], header = TRUE) 
+f7 <- read.csv(f[7], header = TRUE) 
+f8 <- read.csv(f[8], header = TRUE) 
+f9 <- read.csv(f[9], header = TRUE) 
+f10 <- read.csv(f[10], header = TRUE) 
+f11 <- read.csv(f[11], header = TRUE) 
+f12 <- read.csv(f[12], header = TRUE) 
+f13 <- read.csv(f[13], header = TRUE) 
+f14 <- read.csv(f[14], header = TRUE) 
+f15 <- read.csv(f[15], header = TRUE) 
+f16 <- read.csv(f[16], header = TRUE) 
+```
+
+## View DF
+```{r}
+head(f1)
+```
+
+
+## Process
+1. pivot longer so column of temperature and date
+2. Group by site_id
+3. Select dates after day of thaw measurement
+4. Select only rows with temp above 0 (zero)
+5.  apply calculation
