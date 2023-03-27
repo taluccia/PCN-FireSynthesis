@@ -225,15 +225,20 @@ shape = 21, colour = "black", fill = "white",
   scale_color_manual(values=brltnd_palette, name="Biome") +
     scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
                       name = "Permafrost") +
-  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3808650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
-  theme(plot.margin=unit(c(0,0,0,0), "mm")) 
+  theme(plot.margin=unit(c(0,0,0,0), "mm"))  +
+    theme(legend.position = c(.9,.16), 
+          legend.box.background = element_rect(color="white", size=1),
+          legend.key = element_rect(fill = "white"))
 )
 ```
 
 
-
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNSiteBorTunMap.png", plot = map2, dpi = 600)
+```
 
 
 
