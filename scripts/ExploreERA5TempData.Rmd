@@ -31,6 +31,9 @@ reg_theme = theme_bw() + theme(legend.position = "none") +
 # Data
 ```{r}
 manies = read.csv("../data/ERA5forThawPoints/ERA5DailyMeanT2M_ManiesSept30.csv")
+```
+
+```{r}
 natali2017 = read.csv("../data/ERA5forThawPoints/2017ERA5DailyMeanT2M_NataliSept30.csv")
 natali2016 = read.csv("../data/ERA5forThawPoints/2016ERA5DailyMeanT2M_NataliSept30.csv")
 odonnell2005 = read.csv("../data/ERA5forThawPoints/2005ERA5DailyMeanT2M_ODonnellSept30.csv")
@@ -61,16 +64,55 @@ head(manies)
 ## Manies
 ### Select, Pivot Air Temp data
 ```{r}
-manies1 = manies %>%
+
+
+
+( manies1 = manies %>%
   dplyr::select(brl_tnd:year, X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+
+( manies2 = manies1 %>%
   pivot_longer(
     cols = starts_with("X"),
     names_to = "DateTemp",
     values_to = "TempC",
     values_drop_na = TRUE) %>% 
   separate(DateTemp, c("tempDate", NA)) %>% 
-    mutate(across(tempDate, ~ . |> str_extract("\\d+") |> as.character())) 
+    mutate(across(tempDate, ~ . |> str_extract("\\d+") |> as.character())) %>%
+    mutate(tempDate=ymd(tempDate)) %>%
+    mutate(julianTemp = yday(tempDate)) )
+
+( A = manies2 %>% 
+    group_by(id, julinDt) %>%
+    filter(julianTemp < julinDt) %>%
+  filter(TempC > 0) %>%
+  summarize( 
+  A_sum = sum(TempC),
+  A = sqrt(A_sum))
+    )
+
+( B = manies2 %>% 
+    group_by(id, julinDt) %>%
+    filter(julianTemp < 245) %>%
+  filter(TempC > 0) %>%
+  summarize( 
+  B_sum = sum(TempC),
+  B = sqrt(B_sum)) 
+    )
+
+( combine = manies1 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=A, by=c("id", 'julinDt')) %>%
+    full_join(y=B, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+  )
+
+
 ```
+```{r}
+unique(combine$thw_ctv)
+```
+
 ### Format air temp date
 ```{r}
 manies1$tempDate = ymd(manies1$tempDate)
