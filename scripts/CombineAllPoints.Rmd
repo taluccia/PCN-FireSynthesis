@@ -88,51 +88,108 @@ colnames(f14)
 # drop fire_id
 Remove fire_id as some are character and some are integer
 ```{r}
-f01 = f01 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character)) %>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f02 = f02 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-```
-
-```{r}
-f03 = f03 %>% 
-  dplyr::select(-fire_id, -year, -month, -day) %>% 
+pts01 = f01 %>% 
+  dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+pts02 = f02 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
 ```
 
 ```{r}
-f04 = f04 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f05 = f05 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+( pts03 = f03 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) )
+```
+
+```{r}
+pts04 = f04 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+
+pts05 = f05 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
 ```
 ```{r}
-f06 = f06 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f07 = f07 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f08 = f08 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f09 = f09 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f10 = f10 %>% dplyr::select(-year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f11 = f11 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f12 = f12 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f13 = f13 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
-f14 = f14 %>% dplyr::select(-fire_id, -year, -month, -day) %>% mutate(across(c(plot_id, site_id), as.character))%>% 
-  mutate(across(c(fire_yr, orgnc_d, slope), as.numeric))
+pts06 = f06 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+
+pts07 = f07 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+```
+
+```{r}
+pts08 = f08 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+pts09 = f09 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+```
+
+```{r}
+pts10 = f10 %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+  
+pts11 = f11 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+```
+
+```{r}
+pts12 = f12 %>% 
+ dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+
+pts13 = f13 %>% dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
+
+
+pts14 = f14 %>% dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) 
 ```
 
 
 
 # Combine all shapefiles
 ```{r}
-all_pts = dplyr::bind_rows(f01, f02, f03, f04, f05, f06, f07, f08, f09, f10, f11, f12, f13, f14)
+all_pts = dplyr::bind_rows(pts01, pts02, pts03, pts04, pts05, pts06, pts07, pts08, pts09, pts10, pts11, pts12, pts13, pts14)
 ```
 
 # Look at combined data
@@ -143,16 +200,56 @@ head(all_pts)
 ```{r}
 tail(all_pts)
 ```
-
+## Check factor values
 ```{r}
-all_pts
+unique(all_pts$brl_tnd)
+```
+```{r}
+unique(all_pts$thw_ctv)
 ```
 
+```{r}
+all_pts[is.na(all_pts$thw_ctv),]
+```
+```{r}
+all_pts %>% filter(last_nm=="Sizov, Soromotin, Brodt")
+```
 
+```{r}
+unique(all_pts$brn_nbr)
+```
+
+## Clean up factors
+```{r}
+( all_pts_clean = all_pts %>%
+  mutate(thw_ctv = recode_factor(thw_ctv, "T" = "thaw", A = "active")) %>%
+  mutate(brl_tnd = recode_factor(brl_tnd, B = "boreal", boreal = "boreal", "T" = "tundra", tundra = "tundra")) %>%
+  mutate(brn_nbr = recode_factor(brn_nbr, burned = "burned", burn = "burned", Burned = "burned", Burn = "burned", '72burn' = "burned", Unburn = 'unburned', unburn = 'unburned', unburned = 'unburned')) %>%
+    drop_na(thw_ctv))
+```
+## Check factos again
+
+```{r}
+unique(all_pts_clean$brl_tnd)
+```
+```{r}
+unique(all_pts_clean$thw_ctv)
+```
+
+```{r}
+all_pts_clean[is.na(all_pts_clean$thw_ctv),]
+```
+
+```{r}
+unique(all_pts_clean$brn_nbr)
+```
+```{r}
+unique(all_pts_clean$year)
+```
 
 # write to check data
 ```{r eval=FALSE, include=FALSE}
-st_write(all_pts, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
+st_write(all_pts_clean, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
 ```
 
 # Create summarized points by site for map
@@ -166,6 +263,11 @@ unique(all_pts$brn_nbr)
 ```{r}
 unique(all_pts$brl_tnd)
 ```
+
+```{r}
+unique(all_pts$thw_ctv)
+```
+
 new_data <- data %>% filter_all(any_vars(is.na(.))) 
 ```{r}
 all_pts %>% 
@@ -199,7 +301,7 @@ all_pts %>%
 ```{r}
 (
   sum_all_pts = all_pts %>% 
-  dplyr::select(last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr, brn_nbr, geometry) %>%
+  dplyr::select(last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr, brn_nbr, thw_ctv, geometry) %>%
   st_set_geometry(NULL) %>%
   mutate(id = row_number()) %>%
   mutate(n=as.integer(1)) %>%
