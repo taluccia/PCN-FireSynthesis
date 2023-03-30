@@ -64,9 +64,6 @@ head(manies)
 ## Manies
 ### Select, Pivot Air Temp data
 ```{r}
-
-
-
 ( manies1 = manies %>%
   dplyr::select(brl_tnd:year, X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature) %>%
     mutate(id = row_number()) )
