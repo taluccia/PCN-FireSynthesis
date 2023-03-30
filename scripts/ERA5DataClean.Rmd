@@ -41,27 +41,28 @@ f
 
 ## Individual files
 ```{r}
-f1 <- read.csv(f[1], header = TRUE) 
-f2 <- read.csv(f[2], header = TRUE) 
-f3 <- read.csv(f[3], header = TRUE) 
-f4 <- read.csv(f[4], header = TRUE) 
-f5 <- read.csv(f[5], header = TRUE) 
-f6 <- read.csv(f[6], header = TRUE) 
-f7 <- read.csv(f[7], header = TRUE) 
-f8 <- read.csv(f[8], header = TRUE) 
-f9 <- read.csv(f[9], header = TRUE) 
-f10 <- read.csv(f[10], header = TRUE) 
-f11 <- read.csv(f[11], header = TRUE) 
-f12 <- read.csv(f[12], header = TRUE) 
-f13 <- read.csv(f[13], header = TRUE) 
-f14 <- read.csv(f[14], header = TRUE) 
-f15 <- read.csv(f[15], header = TRUE) 
-f16 <- read.csv(f[16], header = TRUE) 
+f2001 <- read.csv(f[1], header = TRUE) 
+f2005 <- read.csv(f[2], header = TRUE) 
+f2006 <- read.csv(f[3], header = TRUE) 
+f2007 <- read.csv(f[4], header = TRUE) 
+f2008 <- read.csv(f[5], header = TRUE) 
+f2009 <- read.csv(f[6], header = TRUE) 
+f2010 <- read.csv(f[7], header = TRUE) 
+f2011 <- read.csv(f[8], header = TRUE) 
+f2012 <- read.csv(f[9], header = TRUE) 
+f2013 <- read.csv(f[10], header = TRUE) 
+f2014 <- read.csv(f[11], header = TRUE) 
+f2015 <- read.csv(f[12], header = TRUE) 
+f2016 <- read.csv(f[13], header = TRUE) 
+f2017 <- read.csv(f[14], header = TRUE) 
+f2018 <- read.csv(f[15], header = TRUE) 
+f2019 <- read.csv(f[16], header = TRUE) 
+f2020 <- read.csv(f[17], header = TRUE) 
 ```
 
 ## View DF
 ```{r}
-head(f1)
+f2001
 ```
 
 
@@ -71,3 +72,429 @@ head(f1)
 3. Select dates after day of thaw measurement
 4. Select only rows with temp above 0 (zero)
 5.  apply calculation
+
+```{r}
+( df2001 = f2001 %>%
+  dplyr::select(brl_tnd:year, X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2005 = f2005 %>%
+  dplyr::select(brl_tnd:year, X20050401_mean_2m_air_temperature:X20050930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2006 = f2006 %>%
+  dplyr::select(brl_tnd:year, X20060401_mean_2m_air_temperature:X20060930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2007 = f2007 %>%
+  dplyr::select(brl_tnd:year, X20070401_mean_2m_air_temperature:X20070930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2008 = f2008 %>%
+  dplyr::select(brl_tnd:year, X20080401_mean_2m_air_temperature:X20080930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2009 = f2009 %>%
+  dplyr::select(brl_tnd:year, X20090401_mean_2m_air_temperature:X20090930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2010 = f2010 %>%
+  dplyr::select(brl_tnd:year, X20100401_mean_2m_air_temperature:X20100930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2011 = f2011 %>%
+  dplyr::select(brl_tnd:year, X20110401_mean_2m_air_temperature:X20110930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2012 = f2012 %>%
+  dplyr::select(brl_tnd:year, X20120401_mean_2m_air_temperature:X20120930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2013 = f2013 %>%
+  dplyr::select(brl_tnd:year, X20130401_mean_2m_air_temperature:X20130930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2014 = f2014 %>%
+  dplyr::select(brl_tnd:year, X20140401_mean_2m_air_temperature:X20140930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2015 = f2015 %>%
+  dplyr::select(brl_tnd:year, X20150401_mean_2m_air_temperature:X20150930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2016 = f2016 %>%
+  dplyr::select(brl_tnd:year, X20160401_mean_2m_air_temperature:X20160930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2017 = f2017 %>%
+  dplyr::select(brl_tnd:year, X20170401_mean_2m_air_temperature:X20170930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2018 = f2018 %>%
+  dplyr::select(brl_tnd:year, X20180401_mean_2m_air_temperature:X20180930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+( df2019 = f2019 %>%
+  dplyr::select(brl_tnd:year, X20190401_mean_2m_air_temperature:X20190930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+```{r}
+f2020
+( df2020 = f2020 %>%
+  dplyr::select(brl_tnd:year, X20200401_mean_2m_air_temperature:X20200930_mean_2m_air_temperature) %>%
+    mutate(id = row_number()) )
+```
+
+# Functions to clean and standarize
+```{r}
+cleanDf = function(x)  {
+  x %>%
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "DateTemp",
+    values_to = "TempC",
+    values_drop_na = TRUE) %>% 
+  separate(DateTemp, c("tempDate", NA)) %>% 
+    mutate(across(tempDate, ~ . |> str_extract("\\d+") |> as.character())) %>%
+    mutate(tempDate=ymd(tempDate)) %>%
+    mutate(julianTemp = yday(tempDate)) -> x
+  return(x)
+}
+
+calc_A = function(x) {
+  x %>% 
+    group_by(id, julinDt) %>%
+    filter(julianTemp < julinDt) %>%
+  filter(TempC > 0) %>%
+  summarize( 
+  A_sum = sum(TempC),
+  A = sqrt(A_sum)) -> x
+  return(x)
+}
+
+
+
+calc_B = function(x) {
+  x %>% 
+    group_by(id, julinDt) %>%
+    filter(julianTemp < 245) %>%
+  filter(TempC > 0) %>%
+  summarize( 
+  B_sum = sum(TempC),
+  B = sqrt(B_sum)) -> x
+  return(x)
+ }
+```
+
+# Apply functions to to each year
+## Clean function
+```{r}
+( clean2001 = df2001 %>% cleanDf() )
+```
+```{r}
+clean2005 = df2005 %>% cleanDf()
+clean2006 = df2006 %>% cleanDf()
+clean2007 = df2007 %>% cleanDf()
+clean2008 = df2008 %>% cleanDf()
+clean2009 = df2009 %>% cleanDf()
+```
+
+```{r}
+clean2010 = df2010 %>% cleanDf()
+clean2011 = df2011 %>% cleanDf()
+clean2012 = df2012 %>% cleanDf()
+clean2013 = df2013 %>% cleanDf()
+clean2014= df2014 %>% cleanDf()
+```
+
+```{r}
+clean2015 = df2015 %>% cleanDf()
+clean2016 = df2016 %>% cleanDf()
+clean2017 = df2017 %>% cleanDf()
+clean2018 = df2018 %>% cleanDf()
+clean2019 = df2019 %>% cleanDf()
+```
+
+## Combine Dataframes
+```{r}
+all_clean = dplyr::bind_rows(clean2001, clean2005, clean2006, clean2007, clean2008, clean2009, clean2010, clean2011, clean2012, clean2013, clean2014, clean2015, clean2016, clean2017, clean2018, clean2019, clean2020)
+```
+
+```{r}
+all_clean
+```
+## Calculate A & B
+```{r}
+calc_A_2001 = clean2001 %>% calc_A()
+calc_B_2001 = clean2001 %>% calc_B()
+```
+
+```{r}
+calc_A_2005 = clean2005 %>% calc_A()
+calc_B_2005 = clean2005 %>% calc_B()
+```
+
+```{r}
+calc_A_2006 = clean2006 %>% calc_A()
+calc_B_2006 = clean2006 %>% calc_B()
+```
+```{r}
+calc_A_2007 = clean2007 %>% calc_A()
+calc_B_2007 = clean2007 %>% calc_B()
+```
+```{r}
+calc_A_2008 = clean200 %>% calc_A()
+calc_B_2008 = clean2008 %>% calc_B()
+```
+
+```{r}
+calc_A_2009 = clean2009 %>% calc_A()
+calc_B_2009 = clean2009 %>% calc_B()
+```
+
+```{r}
+calc_A_2010 = clean2010 %>% calc_A()
+calc_B_2010 = clean2010 %>% calc_B()
+```
+
+```{r}
+calc_A_2011 = clean2011 %>% calc_A()
+calc_B_2011 = clean2011 %>% calc_B()
+```
+
+```{r}
+calc_A_2012 = clean2012 %>% calc_A()
+calc_B_2012 = clean2012 %>% calc_B()
+```
+
+```{r}
+calc_A_2013 = clean2013 %>% calc_A()
+calc_B_2013 = clean2013 %>% calc_B()
+```
+
+```{r}
+calc_A_2014 = clean2014 %>% calc_A()
+calc_B_2014 = clean2014 %>% calc_B()
+```
+
+```{r}
+calc_A_2015 = clean2015 %>% calc_A()
+calc_B_2015 = clean2015 %>% calc_B()
+```
+
+```{r}
+calc_A_2016 = clean2016 %>% calc_A()
+calc_B_2016 = clean2016 %>% calc_B()
+```
+
+```{r}
+calc_A_2017 = clean2017 %>% calc_A()
+calc_B_2017 = clean2017 %>% calc_B()
+```
+
+```{r}
+calc_A_2018 = clean2018 %>% calc_A()
+calc_B_2018 = clean2018 %>% calc_B()
+```
+
+```{r}
+calc_A_2019 = clean2019 %>% calc_A()
+calc_B_2019 = clean2019 %>% calc_B()
+```
+
+```{r}
+calc_A_2020 = clean2020 %>% calc_A()
+calc_B_2020 = clean2020 %>% calc_B()
+```
+
+# Join Data 
+
+```{r}
+( data2001 = df2001 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2001, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2001, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2005 = df2005 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2005, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2005, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2006 = df2006 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2006, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2006, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2007 = df2007 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2007, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2007, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2008 = df2008 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2008, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2008, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2009 = df2009 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2009, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2009, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2010 = df2010 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2010, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2010, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2011 = df2011 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2011, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2011, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2012 = df2012 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2012, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2012, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2013 = df2013 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2013, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2013, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2014 = df2014 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2014, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2014, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2015 = df2015 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2015, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2015, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2016 = df2016 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2016, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2016, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2017 = df2017 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2017, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2017, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2018 = df2018 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2018, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2018, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2019 = df2019 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2019, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2019, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+```{r}
+( data2020 = df2020 %>% dplyr::select(id, brl_tnd:year) %>%
+    full_join(y=calc_A_2020, by=c("id", 'julinDt')) %>%
+    full_join(y=calc_B_2020, by=c("id", 'julinDt')) %>%
+    mutate(C = B/A) %>%
+    mutate(AdjALT = round((thw_dpt*C), 0))
+)
+```
+
+# Combine all 
+```{r}
+all_pts = dplyr::bind_rows(pts01, pts02, pts03, pts04, pts05, pts06, pts07, pts08, pts09, pts10, pts11, pts12, pts13, pts14)
+```
+# Bind rows
