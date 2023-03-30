@@ -88,17 +88,17 @@ colnames(f14)
 # drop fire_id
 Remove fire_id as some are character and some are integer
 ```{r}
-pts01 = f01 %>% 
+( pts01 = f01 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 
-pts02 = f02 %>% 
+( pts02 = f02 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 ```
 
 ```{r}
@@ -110,79 +110,79 @@ pts02 = f02 %>%
 ```
 
 ```{r}
-pts04 = f04 %>% 
+( pts04 = f04 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 
 
-pts05 = f05 %>% 
+( pts05 = f05 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 ```
 ```{r}
-pts06 = f06 %>% 
+( pts06 = f06 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 
 
-pts07 = f07 %>% 
+( pts07 = f07 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
-```
-
-```{r}
-pts08 = f08 %>% 
-  dplyr::select(-fire_id) %>% 
-  mutate(across(c(plot_id, site_id), as.character)) %>% 
-  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
-
-pts09 = f09 %>% 
-  dplyr::select(-fire_id) %>% 
-  mutate(across(c(plot_id, site_id), as.character)) %>% 
-  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 ```
 
 ```{r}
-pts10 = f10 %>% 
+( pts08 = f08 %>% 
+  dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
+
+( pts09 = f09 %>% 
+  dplyr::select(-fire_id) %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) )
+```
+
+```{r}
+( pts10 = f10 %>% 
+  mutate(across(c(plot_id, site_id), as.character)) %>% 
+  mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) )
   
-pts11 = f11 %>% 
+( pts11 = f11 %>% 
   dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 ```
 
 ```{r}
-pts12 = f12 %>% 
+( pts12 = f12 %>% 
  dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 
 
-pts13 = f13 %>% dplyr::select(-fire_id) %>% 
+( pts13 = f13 %>% dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 
 
-pts14 = f14 %>% dplyr::select(-fire_id) %>% 
+( pts14 = f14 %>% dplyr::select(-fire_id) %>% 
   mutate(across(c(plot_id, site_id), as.character)) %>% 
   mutate(across(c(fire_yr, orgnc_d, slope, day), as.numeric)) %>% 
-    mutate(across(day, ~coalesce(., 0))) 
+    mutate(across(day, ~coalesce(., 0))) )
 ```
 
 
@@ -207,9 +207,13 @@ unique(all_pts$brl_tnd)
 ```{r}
 unique(all_pts$thw_ctv)
 ```
-
+```{r}
+min(all_pts$thw_dpt)
+max(all_pts$thw_dpt)
+```
 ```{r}
 all_pts[is.na(all_pts$thw_ctv),]
+all_pts[is.na(all_pts$thw_dpt),]
 ```
 ```{r}
 all_pts %>% filter(last_nm=="Sizov, Soromotin, Brodt")
@@ -225,7 +229,9 @@ unique(all_pts$brn_nbr)
   mutate(thw_ctv = recode_factor(thw_ctv, "T" = "thaw", A = "active")) %>%
   mutate(brl_tnd = recode_factor(brl_tnd, B = "boreal", boreal = "boreal", "T" = "tundra", tundra = "tundra")) %>%
   mutate(brn_nbr = recode_factor(brn_nbr, burned = "burned", burn = "burned", Burned = "burned", Burn = "burned", '72burn' = "burned", Unburn = 'unburned', unburn = 'unburned', unburned = 'unburned')) %>%
-    drop_na(thw_ctv))
+    drop_na(thw_ctv) %>%
+    drop_na(thw_dpt)
+  )
 ```
 ## Check factos again
 
@@ -246,7 +252,12 @@ unique(all_pts_clean$brn_nbr)
 ```{r}
 unique(all_pts_clean$year)
 ```
-
+```{r}
+min(all_pts_clean$thw_dpt)
+max(all_pts_clean$thw_dpt)
+drop = all_pts_clean %>% filter(thw_dpt < 100)
+hist(drop$thw_dpt)
+```
 # write to check data
 ```{r eval=FALSE, include=FALSE}
 st_write(all_pts_clean, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
@@ -310,7 +321,7 @@ all_pts %>%
   group_by(id) %>%
   pivot_wider( names_from = brn_nbr, values_from = n, id_cols = c(id, last_nm, cntry_c, lat, long, brl_tnd, site_id, plot_id, fire_yr)) %>%
   mutate(across(c(burned, unburned), ~coalesce(., 0))) %>%
-  group_by(last_nm, brl_tnd, site_id) %>%
+  group_by(last_nm, brl_tnd) %>%
   summarize( lat = mean(lat),
              long = mean(long),
              burned = sum(burned),
@@ -329,7 +340,25 @@ sum_all_pts_sf = st_as_sf(sum_all_pts, coords = c("long","lat"), crs = 4326, rem
 ```
 
 # write to shapefile
-```{r}
+```{r eval=FALSE, include=FALSE}
 st_write(sum_all_pts_sf, "../outputs/allPoints/SumAllPts.shp", driver="ESRI Shapefile")
 ```
 
+# Aggregate points within 100 km of eachother
+```{r}
+all_pts_clean
+```
+```{r}
+unique(all_pts_clean$plot_id)
+```
+
+```{r}
+unique(all_pts_clean$site_id)
+```
+
+```{r}
+( pts_agg <- all_pts_clean %>% group_by(last_nm) %>%
+    aggregate(all_pts_clean,
+                     FUN = mean, 
+                     join = function(x, y) st_is_within_distance(x, y, dist = 100)) )
+```
