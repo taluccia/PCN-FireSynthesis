@@ -23,6 +23,7 @@ ERA 5 data from google earth engine
 library(tidyverse)
 library(lubridate)
 library(sf)
+library(data.table)
 ```
 
 
@@ -31,7 +32,7 @@ library(sf)
 
 ## vector of data files
 ```{r}
-f <- list.files(path = "../data/ERA5Data/",
+f <- list.files(path = "../data/ERA5DataEE/",
                 pattern = "*.csv", full.names = TRUE)
 ```
 
@@ -75,108 +76,108 @@ f2001
 
 ```{r}
 ( df2001 = f2001 %>%
-  dplyr::select(brl_tnd:year, X20010401_mean_2m_air_temperature:X20010930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20010401_temperature_2m:X20011031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2005 = f2005 %>%
-  dplyr::select(brl_tnd:year, X20050401_mean_2m_air_temperature:X20050930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20050401_temperature_2m:X20051031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2006 = f2006 %>%
-  dplyr::select(brl_tnd:year, X20060401_mean_2m_air_temperature:X20060930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20060401_temperature_2m:X20061031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2007 = f2007 %>%
-  dplyr::select(brl_tnd:year, X20070401_mean_2m_air_temperature:X20070930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20070401_temperature_2m:X20071031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2008 = f2008 %>%
-  dplyr::select(brl_tnd:year, X20080401_mean_2m_air_temperature:X20080930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20080401_temperature_2m:X20081031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2009 = f2009 %>%
-  dplyr::select(brl_tnd:year, X20090401_mean_2m_air_temperature:X20090930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20090401_temperature_2m:X20091031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2010 = f2010 %>%
-  dplyr::select(brl_tnd:year, X20100401_mean_2m_air_temperature:X20100930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20100401_temperature_2m:X20101031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2011 = f2011 %>%
-  dplyr::select(brl_tnd:year, X20110401_mean_2m_air_temperature:X20110930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20110401_temperature_2m:X20111031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2012 = f2012 %>%
-  dplyr::select(brl_tnd:year, X20120401_mean_2m_air_temperature:X20120930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20120401_temperature_2m:X20121031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2013 = f2013 %>%
-  dplyr::select(brl_tnd:year, X20130401_mean_2m_air_temperature:X20130930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20130401_temperature_2m:X20131031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2014 = f2014 %>%
-  dplyr::select(brl_tnd:year, X20140401_mean_2m_air_temperature:X20140930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20140401_temperature_2m:X20141031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2015 = f2015 %>%
-  dplyr::select(brl_tnd:year, X20150401_mean_2m_air_temperature:X20150930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20150401_temperature_2m:X20151031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2016 = f2016 %>%
-  dplyr::select(brl_tnd:year, X20160401_mean_2m_air_temperature:X20160930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20160401_temperature_2m:X20161031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2017 = f2017 %>%
-  dplyr::select(brl_tnd:year, X20170401_mean_2m_air_temperature:X20170930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20170401_temperature_2m:X20171031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2018 = f2018 %>%
-  dplyr::select(brl_tnd:year, X20180401_mean_2m_air_temperature:X20180930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20180401_temperature_2m:X20181031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 ( df2019 = f2019 %>%
-  dplyr::select(brl_tnd:year, X20190401_mean_2m_air_temperature:X20190930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20190401_temperature_2m:X20191031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
 ```{r}
 f2020
 ( df2020 = f2020 %>%
-  dplyr::select(brl_tnd:year, X20200401_mean_2m_air_temperature:X20200930_mean_2m_air_temperature) %>%
+  dplyr::select(brl_tnd:year, X20200401_temperature_2m:X20201031_temperature_2m) %>%
     mutate(id = row_number()) )
 ```
 
-# Functions to clean and standarize
+# Functions to clean 
 ```{r}
 cleanDf = function(x)  {
   x %>%
@@ -186,42 +187,22 @@ cleanDf = function(x)  {
     values_to = "TempC",
     values_drop_na = TRUE) %>% 
   separate(DateTemp, c("tempDate", NA)) %>% 
+    mutate(plot_id = as.character(plot_id)) %>%
     mutate(across(tempDate, ~ . |> str_extract("\\d+") |> as.character())) %>%
     mutate(tempDate=ymd(tempDate)) %>%
     mutate(julianTemp = yday(tempDate)) -> x
   return(x)
 }
-
-calc_A = function(x) {
-  x %>% 
-    group_by(id, julinDt) %>%
-    filter(julianTemp < julinDt) %>%
-  filter(TempC > 0) %>%
-  summarize( 
-  A_sum = sum(TempC),
-  A = sqrt(A_sum)) -> x
-  return(x)
-}
-
-
-
-calc_B = function(x) {
-  x %>% 
-    group_by(id, julinDt) %>%
-    filter(julianTemp < 245) %>%
-  filter(TempC > 0) %>%
-  summarize( 
-  B_sum = sum(TempC),
-  B = sqrt(B_sum)) -> x
-  return(x)
- }
 ```
+
 
 # Apply functions to to each year
 ## Clean function
 ```{r}
 ( clean2001 = df2001 %>% cleanDf() )
 ```
+
+
 ```{r}
 clean2005 = df2005 %>% cleanDf()
 clean2006 = df2006 %>% cleanDf()
@@ -229,7 +210,7 @@ clean2007 = df2007 %>% cleanDf()
 clean2008 = df2008 %>% cleanDf()
 clean2009 = df2009 %>% cleanDf()
 ```
-
+FYI the warning is referencing parts of the name being discarded in the separate process. This can be ignored for these chunks of code.
 ```{r}
 clean2010 = df2010 %>% cleanDf()
 clean2011 = df2011 %>% cleanDf()
@@ -244,257 +225,498 @@ clean2016 = df2016 %>% cleanDf()
 clean2017 = df2017 %>% cleanDf()
 clean2018 = df2018 %>% cleanDf()
 clean2019 = df2019 %>% cleanDf()
+clean2020 = df2020 %>% cleanDf()
 ```
 
-## Combine Dataframes
-```{r}
-all_clean = dplyr::bind_rows(clean2001, clean2005, clean2006, clean2007, clean2008, clean2009, clean2010, clean2011, clean2012, clean2013, clean2014, clean2015, clean2016, clean2017, clean2018, clean2019, clean2020)
+# write to csv
+```{r eval=FALSE, include=FALSE}
+write.csv(clean2001,file = "../outputs/era5Clean/clean2001.csv")
+write.csv(clean2005,file = "../outputs/era5Clean/clean2005.csv")
+write.csv(clean2006,file = "../outputs/era5Clean/clean2006.csv")
+write.csv(clean2007,file = "../outputs/era5Clean/clean2007.csv")
+write.csv(clean2008,file = "../outputs/era5Clean/clean2008.csv")
 ```
 
-```{r}
-all_clean
-```
-## Calculate A & B
-```{r}
-calc_A_2001 = clean2001 %>% calc_A()
-calc_B_2001 = clean2001 %>% calc_B()
-```
-
-```{r}
-calc_A_2005 = clean2005 %>% calc_A()
-calc_B_2005 = clean2005 %>% calc_B()
+```{r eval=FALSE, include=FALSE}
+write.csv(clean2009,file = "../outputs/era5Clean/clean2009.csv")
+write.csv(clean2010,file = "../outputs/era5Clean/clean2010.csv")
+write.csv(clean2011,file = "../outputs/era5Clean/clean2011.csv")
+write.csv(clean2012,file = "../outputs/era5Clean/clean2012.csv")
+write.csv(clean2013,file = "../outputs/era5Clean/clean2013.csv")
 ```
 
-```{r}
-calc_A_2006 = clean2006 %>% calc_A()
-calc_B_2006 = clean2006 %>% calc_B()
-```
-```{r}
-calc_A_2007 = clean2007 %>% calc_A()
-calc_B_2007 = clean2007 %>% calc_B()
-```
-```{r}
-calc_A_2008 = clean200 %>% calc_A()
-calc_B_2008 = clean2008 %>% calc_B()
+```{r eval=FALSE, include=FALSE}
+write.csv(clean2014,file = "../outputs/era5Clean/clean2014.csv")
+write.csv(clean2015,file = "../outputs/era5Clean/clean2015.csv")
+write.csv(clean2016,file = "../outputs/era5Clean/clean2016.csv")
+write.csv(clean2017,file = "../outputs/era5Clean/clean2017.csv")
+write.csv(clean2018,file = "../outputs/era5Clean/clean2018.csv")
 ```
 
-```{r}
-calc_A_2009 = clean2009 %>% calc_A()
-calc_B_2009 = clean2009 %>% calc_B()
+```{r eval=FALSE, include=FALSE}
+write.csv(clean2019,file = "../outputs/era5Clean/clean2019.csv")
+write.csv(clean2020,file = "../outputs/era5Clean/clean2020.csv")
 ```
 
-```{r}
-calc_A_2010 = clean2010 %>% calc_A()
-calc_B_2010 = clean2010 %>% calc_B()
-```
+## Identify ALT date
 
+### 2001
 ```{r}
-calc_A_2011 = clean2011 %>% calc_A()
-calc_B_2011 = clean2011 %>% calc_B()
-```
+( rm2001 = clean2001 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp>=200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
 
-```{r}
-calc_A_2012 = clean2012 %>% calc_A()
-calc_B_2012 = clean2012 %>% calc_B()
-```
+( distinct2001 = rm2001 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
 
-```{r}
-calc_A_2013 = clean2013 %>% calc_A()
-calc_B_2013 = clean2013 %>% calc_B()
 ```
 
 ```{r}
-calc_A_2014 = clean2014 %>% calc_A()
-calc_B_2014 = clean2014 %>% calc_B()
+( act = clean2001 %>%
+  filter(thw_ctv =="active") 
+)
+
+unique(act$julinDt)
 ```
 
+### 2005
 ```{r}
-calc_A_2015 = clean2015 %>% calc_A()
-calc_B_2015 = clean2015 %>% calc_B()
+( rm2005 = clean2005 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp>=200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+(distinct2005 = rm2005 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2006 
+**2006 is active only**
+```{r}
+clean2006
+( rm2006 = clean2006 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 220)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+rm2006 %>% distinct(site_id, Goal2, Goal3)
+
+```
+### 2007
+**2007 is active only**
+```{r}
+
+( rm2007 = clean2007 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 220)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+rm2007 %>% distinct(site_id, Goal2, Goal3)
+
+```
+### 2008
+```{r}
+
+( rm2008 = clean2008 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+(distinct2008 = rm2008 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+```
+### 2009
+```{r}
+
+( rm2009 = clean2009 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+( distinct2009 = rm2009 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+```
+### 2010
+```{r}
+
+( rm2010 = clean2010 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+( distinct2010 = rm2010 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+```
+### 2011
+```{r}
+
+( rm2011 = clean2011 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+( distinct2011 = rm2011 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+```
+### 2012
+```{r}
+
+( rm2012 = clean2012 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2012 = rm2012 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2013
+```{r}
+
+( rm2013 = clean2013 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2013 = rm2013 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2014
+```{r}
+
+( rm2014 = clean2014 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2014 = rm2014 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2015
+```{r}
+
+( rm2015 = clean2015 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2015 = rm2015 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2016
+```{r}
+
+( rm2016 = clean2016 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2016 = rm2016 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2017
+```{r}
+
+( rm2017 = clean2017 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2017 = rm2017 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2018
+```{r}
+
+( rm2018 = clean2018 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2018 = rm2018 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+### 2019
+```{r}
+
+( rm2019 = clean2019 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2019 = rm2019 %>% distinct(plot_id, site_id, year,julianTemp, Goal2, Goal3) )
+
+```
+### 2020
+```{r}
+
+( rm2020 = clean2020 %>%
+  arrange(id, tempDate) %>%
+  group_by(id) %>%
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% 
+    filter(thw_ctv =="thaw") %>% 
+    filter(julianTemp >= 200)  %>%
+    ungroup() %>%
+    filter(RollMean <=0) %>%
+    group_by(last_nm, plot_id, site_id) %>%
+    arrange(julianTemp) %>%
+  mutate(Goal = cumsum(c(1, diff(tempDate) > 1))) %>%
+  group_by(plot_id, site_id, Goal) %>%
+  mutate(Goal2 = min(tempDate), Goal3 = max(tempDate))
+    
+  )
+
+
+( distinct2020 = rm2020 %>% distinct(plot_id, site_id, year, julianTemp, Goal2, Goal3) )
+
+```
+# Bind clean thaw
+```{r}
+( 
+rm = dplyr::bind_rows(rm2001, rm2005, rm2008, rm2009, rm2010, rm2011, rm2012, rm2013, rm2014, rm2015, rm2016, rm2017, rm2018, rm2019, rm2020)
+)
 ```
 
+
 ```{r}
-calc_A_2016 = clean2016 %>% calc_A()
-calc_B_2016 = clean2016 %>% calc_B()
+
 ```
 
-```{r}
-calc_A_2017 = clean2017 %>% calc_A()
-calc_B_2017 = clean2017 %>% calc_B()
-```
 
+# Bind distinct df
 ```{r}
-calc_A_2018 = clean2018 %>% calc_A()
-calc_B_2018 = clean2018 %>% calc_B()
-```
-
-```{r}
-calc_A_2019 = clean2019 %>% calc_A()
-calc_B_2019 = clean2019 %>% calc_B()
-```
-
-```{r}
-calc_A_2020 = clean2020 %>% calc_A()
-calc_B_2020 = clean2020 %>% calc_B()
-```
-
-# Join Data 
-
-```{r}
-( data2001 = df2001 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2001, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2001, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
+( 
+distinct = dplyr::bind_rows(distinct2001, distinct2005, distinct2008, distinct2009, distinct2010, distinct2011, distinct2012, distinct2013, distinct2014, distinct2015, distinct2016, distinct2017, distinct2018, distinct2019, distinct2020)
 )
 ```
 
 ```{r}
-( data2005 = df2005 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2005, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2005, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
+( 
+  summarizeDistinct = distinct %>%
+  group_by(plot_id, site_id, year) %>%
+  summarise( mean_Julian = mean(julianTemp),
+             mean_goal2 = mean(Goal2),
+             min_goal2 = min(Goal2),
+             max_goal2 = max(Goal2)) %>%
+  arrange(min_goal2) 
+  
 )
+  
 ```
 
 ```{r}
-( data2006 = df2006 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2006, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2006, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
+summarizeDistinct %>% 
+  group_by(plot_id, site_id) %>%
+  mutate(KEEP = any(min_goal2 == max_goal2)) %>% 
+  filter(KEEP == FALSE)
 ```
 
 ```{r}
-( data2007 = df2007 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2007, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2007, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
+unique(distinct$plot_id) 
+```
+
+# add standard active layer thickness date column
+```{r}
+( StdDate2001 = clean2001 %>%
+  mutate(stdDateAlt = 282-14)
 )
 ```
 
+Make dataframe of distinct potential dates for standardizing by plot, site, name, and year
+
 ```{r}
-( data2008 = df2008 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2008, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2008, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
+StdDate2005 = clean2005 %>% mutate(stdDateAlt = 273-14)
+StdDate2008 = clean2008 %>% mutate(stdDateAlt = 253-14)
+StdDate2009 = clean2009 %>% mutate(stdDateAlt = 262-14)
+StdDate2010 = clean2010 %>% mutate(stdDateAlt = 265-14)
+StdDate2011 = clean2011 %>% mutate(stdDateAlt = 302-14)
+```
+
+**What if the standardization date is before the measure date??**
+```{r}
+StdDate2012 = clean2012 %>% mutate(stdDateAlt = 253-14)
 ```
 
 ```{r}
-( data2009 = df2009 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2009, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2009, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
+
 ```
 
-```{r}
-( data2010 = df2010 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2010, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2010, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
 
-```{r}
-( data2011 = df2011 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2011, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2011, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2012 = df2012 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2012, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2012, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2013 = df2013 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2013, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2013, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2014 = df2014 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2014, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2014, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2015 = df2015 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2015, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2015, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2016 = df2016 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2016, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2016, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2017 = df2017 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2017, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2017, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2018 = df2018 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2018, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2018, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2019 = df2019 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2019, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2019, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-```{r}
-( data2020 = df2020 %>% dplyr::select(id, brl_tnd:year) %>%
-    full_join(y=calc_A_2020, by=c("id", 'julinDt')) %>%
-    full_join(y=calc_B_2020, by=c("id", 'julinDt')) %>%
-    mutate(C = B/A) %>%
-    mutate(AdjALT = round((thw_dpt*C), 0))
-)
-```
-
-# Combine all 
-```{r}
-all_pts = dplyr::bind_rows(pts01, pts02, pts03, pts04, pts05, pts06, pts07, pts08, pts09, pts10, pts11, pts12, pts13, pts14)
-```
-# Bind rows
