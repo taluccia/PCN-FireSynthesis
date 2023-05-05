@@ -1,0 +1,350 @@
+---
+title: "Subset data for ALT dates"
+author: "Anna Talucci"
+date: "2023-04-27"
+output: html_document
+---
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+
+Standardize thaw depth measures to ALT. 
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(gt)
+library(gtsummary)
+```
+# Data
+
+## Standardized measures
+```{r}
+allDataALT = read_csv("../data/Standardize/AllDataStandardizeALT.csv")
+```
+"../outputs/Standardize/AllDataStandardizeALT.csv")
+
+## vector of data files
+```{r}
+f <- list.files(path = "../data/era5Clean/",
+                pattern = "*.csv", full.names = TRUE)
+```
+
+```{r}
+f
+```
+
+## Individual files
+```{r}
+( f2001 <- read_csv(f[18]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+)
+```
+```{r}
+f2005 <- read_csv(f[19]) %>% mutate(altDate=minDate-14)%>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2006 <- read_csv(f[20]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2007 <- read_csv(f[21]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2008 <- read_csv(f[22]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2009 <- read_csv(f[23]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2010 <- read_csv(f[24]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2011 <- read_csv(f[25]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2012 <- read_csv(f[26]) %>% mutate(altDate=minDate-14)%>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1)%>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2013 <- read_csv(f[27]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2014 <- read_csv(f[28]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2015 <- read_csv(f[29]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2016 <- read_csv(f[30]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2017 <- read_csv(f[31]) %>% mutate(altDate=minDate-14)%>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2018 <- read_csv(f[32]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+f2019 <- read_csv(f[33]) %>% mutate(altDate=minDate-14) %>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+```
+
+```{r}
+(
+  f2020 <- read_csv(f[34]) %>% mutate(altDate=minDate-14)%>% 
+  dplyr::select(id, plot_id:cntry_c, day:id, minDate:altDate) %>%
+  group_by(id) %>%
+  slice(1) %>%
+  mutate(plot_id = as.character(plot_id))
+)
+```
+
+# Combine
+
+```{r}
+(
+  combo = dplyr::bind_rows(f2001, f2005, f2006, f2007, f2008, f2009, f2010, f2011, f2012, f2013, f2014, f2015, f2016, f2017, f2018, f2019, f2020)
+)
+```
+
+# Calculate difference between dates 45179
+```{r}
+(
+  diff = combo %>% 
+    filter(altDate > 0) %>%
+  mutate(dateDiff = altDate-julinDt) %>%
+    dplyr::select(id, plot_id, site_id, year, minDate, altDate, dateDiff)
+)
+
+```
+
+# Combine Data
+```{r}
+allDataALT
+```
+# Merge data frames
+```{r}
+( allData1 = merge(allDataALT, diff, by = c("id", 'plot_id', 'site_id', 'year')) )
+```
+
+# Difference in Measure and adjust ALT
+```{r}
+( allData2 = allData1 %>% 
+    mutate(diffALT = AdjALT - thw_dpt))
+```
+
+```{r}
+write.csv(allData2,file = "../outputs/Standardize/AllDataStandardizeALTwithDates.csv")
+```
+
+# Tables
+```{r}
+( table1 = allData2 %>% 
+  dplyr::select(cntry_c, thw_ctv, dateDiff) %>% 
+    tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+  tbl_summary(  
+    by=thw_ctv,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"),                            
+    label  = list(dateDiff   ~ "difference in measured and calculated date"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Difference in measured and calculated date",
+                 subtitle = "Summary statistics by Country")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(table1, filename = "../outputs/Tables/DatesTable1.html")
+```
+
+
+```{r}
+( table2 = allData2 %>% 
+  dplyr::select(cntry_c, thw_ctv, diffALT) %>% 
+    tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+  tbl_summary(  
+    by=thw_ctv,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"),                            
+    label  = list(diffALT   ~ "difference in measured and calculated ALT"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Difference in measured and calculated ALT",
+                 subtitle = "Summary statistics by Country and whether it was original measured as Active or Thaw")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(table2, filename = "../outputs/Tables/AdjustedMeasureDiffTable2.html")
+```
+allData %>% 
+  dplyr::select(brn_nbr, cntry_c, AdjALT) %>% 
+  tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+      tbl_summary(
+        by = brn_nbr,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"), 
+    label = list(AdjALT   ~ "Standardized Active Layer Thickness"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Standardized measures of Active Layer Thickness",
+                 subtitle = "Summary statistics")
+```{r}
+( table2 = diff %>% 
+  dplyr::select(thw_ctv, diff) %>% 
+    tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+  tbl_summary(  
+    by=thw_ctv,
+    type = diff ~ "continuous2",       
+    statistic = diff ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"),                            
+    label  = list(diff   ~ "difference in measured and calculated date"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Difference in measured and calculated date",
+                 subtitle = "Summary statistics by Active or Thaw measure")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(table2, filename = "../outputs/Tables/DatesThawActiveTable2.html")
+```
+
+```{r}
+( meandiff = combo %>% 
+    filter(altDate > 0) %>%
+  mutate(diff = altDate-julinDt) %>%
+    group_by(last_nm, site_id, plot_id, brn_nbr, cntry_c) %>%
+  summarize(meanDiff = mean(diff))
+)
+```
+
+```{r}
+( ca = diff  %>% filter(cntry_c =="CA")
+  
+)
+ru = diff  %>% filter(cntry_c =="RU")
+us = diff  %>% filter(cntry_c =="US")
+```
+
+```{r}
+# Color based on value
+color <- ifelse(ca$meanDiff < 0, "#f1a340", "#998ec3")
+
+ggplot(ca, aes(x = reorder(id, meanDiff), y = meanDiff)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE,
+           fill = color,     
+           color = "white") +
+  geom_hline(yintercept = 0, color = 1, lwd = 0.2) +
+  #geom_text(aes(label = group, # Text with groups
+                #hjust = ifelse(value < 0, 1.5, -1),
+               # vjust = 0.5), size = 2.5) +
+  xlab("Group") +
+  ylab("difference") +
+  #scale_y_continuous(breaks = seq(-2, 2, by = 1),limits = c(-2.5, 2.5)) +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(),  # Remove Y-axis texts
+        axis.ticks.y = element_blank(), # Remove Y-axis ticks
+        panel.grid.major.y = element_blank()) + # Remove horizontal grid
+  facet_wrap(~cntry_c, scales = "free_y")
+```

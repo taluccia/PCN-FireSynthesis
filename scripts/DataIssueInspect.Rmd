@@ -1,0 +1,89 @@
+---
+title: "Data issues"
+author: "Anna Talucci"
+date: "2023-05-05"
+output: html_document
+---
+
+# overview
+
+# packages
+```{r}
+library(tidyverse)
+library(lubridate)
+library(gt)
+library(gtsummary)
+library(skimr)
+library(cowplot)
+library(patchwork)
+```
+
+
+# Data
+```{r}
+thawalt = read_csv("../data/Standardize/ThawStandardizeALT.csv")
+```
+
+```{r}
+activeALT = read_csv("../data/Standardize/ActiveStandardizeALT.csv")
+```
+# Look at the data
+
+## Thaw standardized
+```{r}
+skimr::skim(thawalt)
+```
+
+```{r}
+glimpse(thawalt)
+```
+
+## Thaw standardized
+```{r}
+skimr::skim(activeALT)
+```
+
+```{r}
+glimpse(activeALT)
+```
+
+
+# Russia
+
+## Thaw
+```{r}
+thawalt %>% filter(cntry_c=="RU")
+```
+
+## Active
+```{r}
+activeALT %>% filter(cntry_c=="RU")
+```
+
+# Negatives
+
+## Thaw 
+```{r}
+thawalt %>% filter(AdjALT<0)
+```
+
+## Active
+```{r}
+( activeNegIssue = activeALT %>% filter(AdjALT<0) )
+```
+
+
+```{r}
+write.csv(activeNegIssue,file = "../outputs/DataIssues/activeNegIssue.csv")
+```
+
+# High Values
+
+## Thaw
+```{r}
+( thawHighValues = thawalt %>% filter(AdjALT>1000) ) 
+```
+
+```{r}
+write.csv(thawHighValues,file = "../outputs/DataIssues/thawHighValues.csv")
+```

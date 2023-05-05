@@ -1,0 +1,208 @@
+---
+title: "Standardized Thaw Figures"
+author: "Anna Talucci"
+date: "2023-04-26"
+output: html_document
+---
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# overview
+
+# packages
+```{r}
+library(tidyverse)
+library(lubridate)
+library(gt)
+library(gtsummary)
+library(skimr)
+library(cowplot)
+library(patchwork)
+```
+
+
+# Data
+```{r}
+ThawALT = read_csv("../data/Standardize/ThawStandardizeALT.csv")
+```
+
+```{r}
+ActiveALT = read_csv("../data/Standardize/ActiveStandardizeALT.csv")
+```
+# Look at the data
+```{r}
+skimr::skim(ThawALT)
+```
+
+```{r}
+glimpse(ThawALT)
+```
+
+```{r}
+skimr::skim(ActiveALT)
+```
+
+```{r}
+glimpse(ActiveALT)
+```
+
+# Remove Data Issues
+```{r}
+( ThawALT1 = ThawALT %>% filter(AdjALT<1000) %>% filter(AdjALT>0) )
+( ActiveALT1 = ActiveALT %>% filter(AdjALT<1000) %>% filter(AdjALT>0) )
+```
+# Visusalize
+
+## Thaw Standardized
+```{r}
+( box1 = ThawALT1 %>% 
+  ggplot(., aes(x=brn_nbr, y=AdjALT)) +
+  geom_boxplot() +
+  facet_wrap(~cntry_c, scales="free_y") +
+  theme_bw() +
+  labs(x="", y="Active Layer Thickness\n(cm)", title = "Thaw Standardize")
+)
+```
+
+
+
+
+## Active Standardized
+```{r}
+( box2 = ActiveALT1 %>% 
+  ggplot(., aes(x=brn_nbr, y=AdjALT)) +
+  geom_boxplot() +
+  facet_wrap(~cntry_c, scales="free_y") +
+  theme_bw() +
+  labs(x="", y="Active Layer Thickness\n(cm)", title = "Active Standardize")
+)
+```
+
+
+```{r}
+( grid2 =  cowplot::plot_grid(box1, box2, ncol=1, labels = c('A', 'B'), label_size = 12)  ) 
+```
+```{r}
+ggsave("../figures/BoxThawActiveStandardize.png", plot = grid2, width = 6, height =5, units = c("in"), dpi=600, bg = "white" )
+```
+
+
+# Summary Tables
+
+tbl_strata(
+    strata = cyl,
+    ~.x %>%
+      tbl_summary(
+        by = am,
+        type = where(is.numeric) ~ "continuous"
+      ) %>%
+      modify_header(all_stat_cols() ~ "**{level}**")
+  )
+```{r}
+( t1 = ThawALT1 %>% 
+  dplyr::select(brn_nbr, cntry_c, AdjALT) %>% 
+  tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+      tbl_summary(
+        by = brn_nbr,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"), 
+    label = list(AdjALT   ~ "Standardized Active Layer Thickness"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Thaw depth converted to Active Layer Thickness",
+                 subtitle = "Summary statistics")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(t1, filename = "../outputs/Tables/ThawStandSum1.html")
+```
+
+
+
+
+
+
+```{r}
+( t4 = ActiveALT1 %>% 
+  dplyr::select(brn_nbr, cntry_c, AdjALT) %>% 
+  tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+      tbl_summary(
+        by = brn_nbr,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"), 
+    label = list(AdjALT   ~ "Standardized Active Layer Thickness"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Active measure converted to Active Layer Thickness",
+                 subtitle = "Summary statistics")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(t4, filename = "../outputs/Tables/ActiveStandSum1.html")
+```
+
+# Combine 
+```{r}
+(allData = bind_rows(ThawALT1, ActiveALT1))
+```
+
+```{r}
+write.csv(allData,file = "../outputs/Standardize/AllDataStandardizeALT.csv")
+```
+
+# Table all Data
+```{r}
+( t5 = allData %>% 
+  dplyr::select(brn_nbr, cntry_c, AdjALT) %>% 
+  tbl_strata(
+    strata = cntry_c,
+    ~.x %>%
+      tbl_summary(
+        by = brn_nbr,
+    type = all_continuous() ~ "continuous2",       
+    statistic = all_continuous() ~ c(
+      "{mean} ({sd})",                             
+      "{median} ({p25}, {p75})",                   
+      "{min}, {max}"), 
+    label = list(AdjALT   ~ "Standardized Active Layer Thickness"))) %>%
+  as_gt() %>%
+  gt::tab_header(title = "Standardized measures of Active Layer Thickness",
+                 subtitle = "Summary statistics")
+) 
+```
+
+```{r eval=FALSE, include=FALSE}
+gt::gtsave(t5, filename = "../outputs/Tables/AllDataSummary.html")
+```
+
+# Summary Figures
+```{r}
+( p1 = allData %>% 
+ggplot(., aes(x = brn_nbr, y=AdjALT)) +
+  geom_violin() + 
+  
+  geom_boxplot(width=0.1) +
+  stat_summary(fun.y=mean, geom="point", shape=23, size=2, color="red") +
+  facet_wrap(~cntry_c, scales="free_y") +
+  theme_bw() +
+  labs(x="", y="Active Layer Thickness\n(cm)")
+)
+```
+
+```{r}
+ggsave("../figures/AllDataViolin.png", plot = p1, width = 5, height =4, units = c("in"), dpi=600, bg = "white" )
+```
+
+
