@@ -233,6 +233,23 @@ unique(all_pts$brn_nbr)
     drop_na(thw_dpt)
   )
 ```
+## Column Names for EE
+cat(paste0(sprintf('"%s"', xdf$Name), collapse = ", "))
+```{r}
+cat(paste0(sprintf('"%s"', colnames(all_pts_clean)), collapse = ", "))
+```
+```{r}
+( 
+  julianDt_na = all_pts_clean %>% filter_at(vars(julinDt), all_vars(is.na(.))) 
+)
+
+unique(julianDt_na$last_nm)
+```
+```{r}
+(
+  dropJulianDtNA = all_pts_clean %>% filter(julinDt>0)
+)
+```
 ## Check factos again
 
 ```{r}
@@ -258,9 +275,14 @@ max(all_pts_clean$thw_dpt)
 drop = all_pts_clean %>% filter(thw_dpt < 100)
 hist(drop$thw_dpt)
 ```
+
 # write to check data
 ```{r eval=FALSE, include=FALSE}
 st_write(all_pts_clean, "../outputs/allPoints/AllDataPts.shp", driver="ESRI Shapefile") 
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(dropJulianDtNA, "../outputs/allPoints/AllDataPtsRemoveJulianNA.shp", driver="ESRI Shapefile") 
 ```
 
 # Create summarized points by site for map
