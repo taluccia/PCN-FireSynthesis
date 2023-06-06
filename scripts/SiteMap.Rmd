@@ -19,6 +19,7 @@ library(sf)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(RColorBrewer)
+library(cowplot)
 ```
 # Projection
 ```{r}
@@ -153,8 +154,49 @@ nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
 ```{r}
 points_pp
 ```
+
+
+
+
+
+
+
+
 ```{r}
-lastnm_palette = c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+lastnm_palette = c("#FF7F00", "#CAB2D6", '#ed217c', "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+
+```{r}
+lastnm_shape = c(15, 16, 17, 18, 15, 16, 17, 18,15, 16, 17, 18, 15, 16, 17)
+```
+
+```{r}
+lastnm_size = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+```
+
+```{r}
+lastnm_palette2 = c("#D95F02", "#E7298A", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+
+```{r}
+lastnm_palette2 = c("#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+```{r}
+lastnm_palette3 = c("#00876c", 
+'#42986f',
+'#68a973',
+'#8cb978',
+'#b0c880',
+'#d3d78c',
+'#f7e59b',
+"#FFFF99",
+'#f4cc80',
+'#f1b26b',
+'#ed975c',
+"#FF7F00",
+'#e77b53',
+'#df5e50',
+'#de425b')
 ```
 
 ```{r}
@@ -183,7 +225,7 @@ sa_map <- ggplot() +
  
    geom_sf(data = points_pp, aes(colour= last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
-  scale_color_manual(values=lastnm_palette) +
+  scale_color_manual(values=lastnm_palette2) +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
@@ -197,9 +239,10 @@ sa_map
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
     geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
  
-   geom_sf(data = points_pp, aes(colour= last_nm)) +
+   geom_sf(data = points_pp, aes(colour= last_nm, shape =last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
   scale_color_manual(values=lastnm_palette, name="Data contributor") +
+    scale_shape_manual(values = lastnm_shape, name="Data contributor") +
     scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
                       name = "Permafrost") +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
@@ -212,6 +255,71 @@ sa_map
 ```{r eval=FALSE, include=FALSE}
 ggsave("../figures/PCNSiteMap.png", plot = map1, dpi = 600)
 ```
+
+# Map bottom legend
+```{r fig.height=5, fig.width=6}
+(
+  ContributorLegend <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+ 
+   geom_sf(data = points_pp, aes(colour= last_nm, shape =last_nm)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=lastnm_palette, name="Data contributor") +
+    scale_shape_manual(values = lastnm_shape, name="Data contributor") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7"),
+        plot.margin=unit(c(0,0,0,0), "mm"),
+        legend.key=element_blank(),
+        legend.position = "bottom",
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7)) + 
+  guides(fill=guide_legend(ncol=5,bycol=TRUE))
+)
+```
+
+```{r fig.height=5, fig.width=6}
+(
+  permafrostLegend <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
+ 
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporadic"),
+                      name = "Permafrost") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7"),
+        plot.margin=unit(c(0,0,0,0), "mm"),
+        legend.key=element_blank(),
+        legend.position = "bottom",
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7)) + 
+  guides(fill=guide_legend(ncol=5,byrow=TRUE))
+)
+```
+
+# No legend
+```{r fig.height=5, fig.width=6}
+(
+  mapNoLegend <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
+ 
+   geom_sf(data = points_pp, aes(colour= last_nm, shape =last_nm)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=lastnm_palette, name="Data contributor") +
+    scale_shape_manual(values = lastnm_shape, name="Data contributor") +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporadic"),
+                      name = "Permafrost") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7"),
+        plot.margin=unit(c(0,0,0,0), "mm"),
+        legend.key=element_blank(),
+        legend.position = "none")
+)
+```
 # Map 2 with Summarized sites and colored for Tundra/Boreal
 shape = 21, colour = "black", fill = "white", 
 ```{r fig.height=5, fig.width=6}
@@ -223,7 +331,7 @@ shape = 21, colour = "black", fill = "white",
    geom_sf(data = sumpts_pp, aes(colour= brl_tnd)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
   scale_color_manual(values=brltnd_palette, name="Biome") +
-    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporadic"),
                       name = "Permafrost") +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3808650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
@@ -242,9 +350,21 @@ ggsave("../figures/PCNSiteBorTunMap.png", plot = map2, dpi = 600)
 
 
 
+# Cowplot
+```{r}
+legend_permafrost = cowplot::get_legend(permafrostLegend)
+legend_sites = cowplot::get_legend(ContributorLegend)
+```
 
-
-
+```{r}
+( pairLegend = plot_grid(legend_permafrost, legend_sites, ncol = 1))
+```
+```{r fig.height=5, fig.width=6}
+(mapFigure = plot_grid(mapNoLegend, legend_permafrost, legend_sites, ncol = 1, rel_heights = c(1.1, .1, .1)) )
+```
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNMapSitesContributors.png", plot = mapFigure, dpi = 600, bg='white')
+```
 
 # Unused
 ## Set Zoom level
