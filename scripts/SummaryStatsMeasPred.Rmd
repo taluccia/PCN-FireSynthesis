@@ -1,0 +1,39 @@
+---
+title: "SummaryStatsMeasuredvPredicted"
+author: "Anna Talucci"
+date: "2023-06-06"
+output: html_document
+---
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+Figures looking at measured versus predicted
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+# Data
+
+## Standardized measures
+```{r}
+allDataALT = read_csv("../data/Standardize/AllDataStandardizeALTwithDates.csv")
+```
+
+```{r}
+allDataALT
+```
+
+
+```{r}
+allDataALT %>% group_by(cntry_c) %>%
+  summarize(n=n())
+```

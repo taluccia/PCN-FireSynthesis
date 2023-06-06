@@ -1,0 +1,279 @@
+---
+title: "Figure Measured Predicted Air Temperature"
+author: "Anna Talucci"
+date: "2023-06-02"
+output: html_document
+---
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+# Overview
+Figures looking at measured versus predicted
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggpubr)
+library(ggnewscale)
+```
+# Plot theme
+```{r}
+comp_theme = theme_light() + theme(legend.position = "none") +  
+  theme(panel.grid.major = element_blank()) +
+    theme(axis.title.y = element_text(size = 11, hjust = 0.5, vjust = 1.1),
+        axis.text.x = element_text(size = 10, color = "black"),
+        axis.text.y = element_text(size = 10, color = "black"),
+        axis.line = element_line(colour = "black"))
+```
+
+# Data
+
+## Temp
+```{r}
+temp = read_csv("../data/era5Clean/ERA5CombineAll.csv")
+```
+
+## Standardized measures
+```{r}
+allDataALT = read_csv("../data/Standardize/AllDataStandardizeALTwithDates.csv")
+```
+
+
+# Filter
+
+## Select first 
+```{r}
+allDataALT
+```
+```{r}
+( example1 = allDataALT[1, ] )
+```
+
+```{r}
+( sample150 = allDataALT %>% 
+    filter(last_nm == "Manies") %>%
+    filter(id ==150) %>%
+    rename(GraphJulian = altDate)
+)
+
+
+```
+
+```{r}
+( sample151 = allDataALT %>% 
+    filter(last_nm == "Manies") %>%
+    filter(id == 151) %>%
+    rename(GraphJulian = altDate)
+)
+
+
+```
+
+```{r}
+( Temp150 = temp %>% 
+    filter(last_nm == "Manies") %>%
+    filter(id == 150) %>%
+    rename(GraphJulian = altDate)
+)
+
+
+```
+
+```{r}
+( Temp151 = temp %>% 
+    filter(last_nm == "Manies") %>%
+    filter(id == 151) %>%
+    rename(GraphJulian = altDate) %>%
+    mutate(measureALT = 38 ) %>%
+    mutate(measureDate = 151 ) %>%
+    mutate(predALT = 132 ) %>%
+    mutate(predDate = 270 )
+)
+```
+
+```{r}
+( Temp2 = temp %>% 
+    filter(TempC > -9) %>% 
+    filter(julianTemp > 100) %>%
+    filter(julianTemp <290) %>%
+    filter(last_nm == "Manies") %>%
+    filter(id %in% c(150, 151)) 
+)
+
+
+```
+
+
+## 2 Active
+```{r}
+type <- c("measured", "predicted")
+depth <- c(-3.68, -3.68)
+dayJ <- c(264, 271) # 267, 270, adjust to minimize overlap on graph
+
+df <- data.frame(type, depth, dayJ)
+```
+
+position=position_jitter(h=0,w=3),
+
+theme(axis.title = element_text( angle = 90, color="red", size=15, face=3))
+```{r}
+( plot150Active2 = Temp2 %>%
+    filter(id=="150") %>%
+    ggplot(., mapping = aes(x = julianTemp, y = TempC)) + 
+    geom_line(color='#006D5B')+
+   scale_y_continuous(
+      name = (expression("Temperature " ( degree*C))), breaks = c(-10,-5, 0, 10, 20),
+      sec.axis = dup_axis( name="", breaks=c(0,-1.6, -3.68), labels = c("0","5", "40"))) +
+  geom_segment(aes(x = 264, y = 0, xend = 264, yend = -3.68), color="black", size=1) +
+  geom_segment(aes(x = 271, y = 0, xend = 271, yend = -3.68), color="black", size=1) +
+    # Point1
+    new_scale_color() +
+    geom_point(data = df, aes(x=dayJ, y=depth, fill=type, color=type),  size = 4, pch=21, stroke =1.8) +# 40
+          scale_fill_manual(name="", values=c( "#3b5a9d", "#FEC287FF"))  +
+          scale_color_manual(name="", values = c( "grey79", "black")) +
+
+    
+    xlab("Julian date") +
+    
+  theme_light() +
+    theme(legend.position = "none", plot.margin = margin(t=5, b=0, r=20, l=5, "mm")) +  
+
+    theme(axis.title.y = element_text(size = 10),
+          axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 9, color = "black"),
+        axis.text.y = element_text(size = 9, color = "black"))
+)
+```
+axis.title.y=element_text(angle=0, face="bold", hjust=0.2,
+                                  margin = margin(r = -70))) +
+
+```{r}
+( plot150Active = Temp2 %>%
+    filter(id=="150") %>%
+    ggplot(., mapping = aes(x = julianTemp, y = TempC)) + 
+    geom_line(color='#006D5B')+
+   scale_y_continuous(
+      name = "Temperature (Celecius)", breaks = c(-10,-5, 0, 10, 20),
+      sec.axis = dup_axis( name="Depth (cm)\n(log scale)", breaks=c(0,-1.6, -3.68), labels = c("0","-5", "-40"))) +
+
+    geom_point(aes(x=267, y=-3.68), color='#4F7959', size = 2) +# 40
+  geom_point(aes(x=270, y=-3.68), color='#4F7959', size = 2) +# 40
+  geom_segment(aes(x = 267, y = 0, xend = 267, yend = -3.68), color="#4F7959") +
+  geom_segment(aes(x = 270, y = 0, xend = 270, yend = -3.68), color="#4F7959") +
+    
+    annotate('text', x=262, y=-2.5, label = "Measured", angle=90) +
+    annotate('text', x=275, y=-2.5, label = "Predicted", angle=-90) +
+    xlab("Julian date") +
+  theme_light()
+)
+```
+  xlab("Julian date") +
+  ylab("Temperature (Celecius)") +
+  
+  theme(axis.title.y.right = element_text(vjust=0.9)) +
+```{r}
+( plot151Thaw = Temp2 %>%
+    filter(id=="150") %>%ggplot(Temp2, mapping = aes(x = julianTemp, y = TempC)) + 
+    geom_line(color='#5c7070')+
+   scale_y_continuous(
+      name = "Temperature (Celecius)",
+      sec.axis = dup_axis( name="Depth (cm)\n(log scale)", breaks=c(0,-1.6,-3.46, -4.8), labels = c("0","-5", "-38", "-132"))) +
+  geom_point(aes(x=270, y=-4.8), color='#68423D', size=2) + # 132
+  geom_point(aes(x=150, y=-3.46), color='#68423D', size=2) +# 38
+  geom_segment(aes(x = 150, y = 0, xend = 150, yend = -3.46), color='#68423D') +
+  geom_segment(aes(x = 270, y = 0, xend = 270, yend = -4.8), color='#68423D') +
+    annotate('text', x=145, y=-2, label = "Measured", angle=90)+
+    annotate('text', x=275, y=-2.5, label = "Predicted", angle=-90)+
+ xlab("Julian date") +
+    
+  theme_light()
+)
+```
+## 2 Thaw
+```{r}
+type2 <- c("measured", "predicted")
+depth2 <- c(-3.46, -4.8)
+dayJ2 <- c(150, 270) # 267, 270, adjust to minimize overlap on graph
+
+df2 <- data.frame(type2, depth2, dayJ2)
+```
+```{r}
+( plot151Thaw2 = Temp2 %>%
+    filter(id=="151") %>%
+    ggplot(., mapping = aes(x = julianTemp, y = TempC)) + 
+    geom_line(color='#006D5B')+
+   scale_y_continuous(
+      name = (expression("Temperature " ( degree*C))), breaks = c(-10,-5, 0, 10, 20),
+      sec.axis = dup_axis( name="", breaks=c(0,-1.6,-3.46, -4.8), labels = c("0","5", "38", "132"))) +
+  geom_segment(aes(x = 150, y = 0, xend = 150, yend = -3.46), color="black", size=1) +
+  geom_segment(aes(x = 270, y = 0, xend = 270, yend = -4.8), color="black", size=1) +
+    # Point1
+    new_scale_color() +
+    geom_point(data = df2, aes(x=dayJ2, y=depth2, fill=type2, color=type2),  size = 4, pch=21, stroke =1.8) +# 40
+          scale_fill_manual(name="", values=c( "#3b5a9d", "#FEC287FF"))  +
+          scale_color_manual(name="", values = c( "grey79", "black")) +
+
+    
+    xlab("Julian date") +
+    
+  theme_light() +
+    theme(legend.position = "none", plot.margin = margin(t=5, b=0, r=20, l=5, "mm")) +  
+    theme(axis.title.y = element_text(size = 10),
+          axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 9, color = "black"),
+        axis.text.y = element_text(size = 9, color = "black"))
+
+)
+```
+
+# Legend
+```{r}
+( legend = Temp2 %>%
+    filter(id=="151") %>%
+    ggplot(., mapping = aes(x = julianTemp, y = TempC)) + 
+    geom_line(color='#006D5B')+
+   scale_y_continuous(
+      name = (expression("Temperature " ( degree*C))), breaks = c(-10,-5, 0, 10, 20),
+      sec.axis = dup_axis( name="", breaks=c(0,-1.6,-3.46, -4.8), labels = c("0","5", "38", "132"))) +
+  geom_segment(aes(x = 150, y = 0, xend = 150, yend = -3.46), color="black", size=1) +
+  geom_segment(aes(x = 270, y = 0, xend = 270, yend = -4.8), color="black", size=1) +
+    # Point1
+    new_scale_color() +
+    geom_point(data = df2, aes(x=dayJ2, y=depth2, fill=type2, color=type2),  size = 4, pch=21, stroke =1.8) +# 40
+          scale_fill_manual(name="", values=c( "#3b5a9d", "#FEC287FF"))  +
+          scale_color_manual(name="", values = c( "grey79", "black")) +
+
+    
+    xlab("Julian date") +
+    
+  theme_light() +
+    theme(legend.position = "right", 
+          plot.margin = margin(t=5, b=0, r=20, l=5, "mm")) 
+
+)
+```
+
+
+# Combine
+
+```{r}
+
+pt_legend = cowplot::get_legend(legend)
+```
+```{r}
+( combineFig = cowplot::plot_grid(plot151Thaw2, plot150Active2, ncol=1, labels = "AUTO") + 
+  draw_label("Depth (cm)", color = "black", x=  .87, y=.225, vjust= 1.5,size = 10, angle = 0)  + 
+  draw_label("Depth (cm)", color = "black", x=  .86, y=.72, vjust= 1.5,size = 10, angle = 0) +
+  draw_grob(pt_legend, x = .4, y=0, width=1, height=1, scale = .8)
+  )
+```
+
+```{r}
+ggsave("../figures/TempMeasuredPredicted.png", plot = combineFig, width = 6, height =6, units = c("in"), dpi=600, bg = "white" )
+```
