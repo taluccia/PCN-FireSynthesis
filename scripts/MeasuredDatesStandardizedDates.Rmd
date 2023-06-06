@@ -219,6 +219,7 @@ allDataALT
 write.csv(allData2,file = "../outputs/Standardize/AllDataStandardizeALTwithDates.csv")
 ```
 
+
 # Tables
 ```{r}
 ( table1 = allData2 %>% 
