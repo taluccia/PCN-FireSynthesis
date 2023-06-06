@@ -287,6 +287,28 @@ clean2001 %>%
     ungroup() %>%
   dplyr::select(last_nm, plot_id, site_id, year, minDate) 
 ```
+```{r}
+clean2001 %>%
+  arrange(id, tempDate) %>% # sorts from first to last date
+  group_by(id) %>% # group by ids
+  mutate(RollMean = zoo::rollmean(TempC, k = 5, fill = NA)) %>% # calculate a rolling mean of temp
+
+    filter(julianTemp >= 200)  %>% # select dates after Julian day 200
+    ungroup() %>% # ungroup
+    filter(RollMean <=0) %>% # remove rolling means greater than or equal to zero  
+
+    group_by(last_nm, plot_id, site_id, year) %>% # regroup by last name, plot id, and site id
+  #filter(site_id== "DFTB") %>%
+    arrange(julianTemp) %>% # sort by date of temp measures
+  mutate(julianTemp_diff = julianTemp - lag(julianTemp)) %>%
+  filter(julianTemp_diff >= 1) %>% # find where the lag is greater than or equal to 1 (remove zero lag days between freezing)
+  summarize(minDate = min(julianTemp),
+            meanDate = mean(julianTemp),
+            maxDate = max(julianTemp)) %>%
+    ungroup() %>%
+  dplyr::select(last_nm, plot_id, site_id, year, minDate) 
+  
+```
 
 ```{r}
 ( date = clean2001 %>%
