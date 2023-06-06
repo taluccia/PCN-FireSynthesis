@@ -53,6 +53,14 @@ glimpse(ActiveALT)
 ( ThawALT1 = ThawALT %>% filter(AdjALT<1000) %>% filter(AdjALT>0) )
 ( ActiveALT1 = ActiveALT %>% filter(AdjALT<1000) %>% filter(AdjALT>0) )
 ```
+
+```{r}
+min(ActiveALT1$fire_yr)
+max(ActiveALT1$fire_yr)
+min(ThawALT1$fire_yr)
+max(ThawALT1$fire_yr)
+```
+
 # Visusalize
 
 ## Thaw Standardized
