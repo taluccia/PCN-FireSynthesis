@@ -96,7 +96,9 @@ f1_dates
 ```
 
 
-
+```{r}
+f1_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/balliargeon.csv')
+```
 
 ```{r eval=FALSE, include=FALSE}
 f1 = f1 %>% 

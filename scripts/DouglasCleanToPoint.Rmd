@@ -72,7 +72,9 @@ f5_dates
 ```
 
 
-
+```{r}
+f5_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/douglas.csv')
+```
 
 ```{r}
 f5_dates %>% distinct(julianDate, year, date)

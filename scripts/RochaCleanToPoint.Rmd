@@ -83,6 +83,9 @@ f13_dates = f13 %>%
 f13_dates
 ```
 
+```{r}
+f13_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/rocha.csv')
+```
 
 ```{r}
 f13_dates %>% distinct(julianDate, year, date)

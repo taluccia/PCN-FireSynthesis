@@ -79,7 +79,9 @@ f7_dates
 
 
 
-
+```{r}
+f7_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/gaglioti.csv')
+```
 
 ```{r}
 f7_dates %>% distinct(julianDate, year, date)

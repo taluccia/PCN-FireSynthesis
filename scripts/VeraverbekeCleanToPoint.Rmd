@@ -69,7 +69,9 @@ f15_dates = f15 %>%
 f15_dates
 ```
 
-
+```{r}
+f15_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/veraverbeke.csv')
+```
 ```{r}
 f15_dates %>% distinct(julianDate, year, date)
 ```

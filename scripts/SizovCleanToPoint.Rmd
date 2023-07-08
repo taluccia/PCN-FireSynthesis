@@ -70,7 +70,9 @@ f14_dates
 ```
 
 
-
+```{r}
+f14_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/sizov.csv')
+```
 ```{r}
 f14_dates %>% distinct(julianDate, year, date)
 ```

@@ -64,6 +64,9 @@ f2_dates = f2 %>%
 f2_dates
 ```
 
+```{r}
+f2_dates %>% distinct(site_id, plot_id, burn_unburn) %>% write.csv(., '../outputs/pairs/breen.csv')
+```
 
 ```{r}
 f2_dates %>% distinct(julianDate, year, date)

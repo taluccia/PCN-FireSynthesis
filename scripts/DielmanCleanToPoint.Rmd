@@ -87,6 +87,10 @@ f4_dates
   drop_na(.)
 
 ```{r}
+f4_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/dielman.csv')
+```
+
+```{r}
 f4_dates %>% distinct(julianDate, year, date)
 ```
 

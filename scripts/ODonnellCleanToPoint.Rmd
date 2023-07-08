@@ -74,6 +74,9 @@ f10_dates = f10 %>%
 f10_dates
 ```
 
+```{r}
+f10 %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/odonnell.csv')
+```
 
 ```{r}
 f10_dates %>% distinct(julianDate, year, date)

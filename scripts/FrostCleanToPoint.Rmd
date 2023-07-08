@@ -81,6 +81,9 @@ f6_dates
 ```
 
 
+```{r}
+f6_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/frost.csv')
+```
 
 ```{r}
 f6_dates %>% distinct(julianDate, year, date)

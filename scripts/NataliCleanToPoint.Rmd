@@ -114,7 +114,9 @@ Combine correct and fixed longitude
 ( f9_all_long = f9_long_correct %>% bind_rows(f9_long_fix) )
 ```
 
-
+```{r}
+f9_all_long %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/natali.csv')
+```
 ```{r}
 f9_all_long %>% filter(site_id =="YKD")
 ```

@@ -34,6 +34,16 @@ allDataALT
 
 
 ```{r}
-allDataALT %>% group_by(cntry_c) %>%
+allDataALT %>% group_by(cntry_c, brl_tnd, site_id, last_nm) %>%
+  summarize(n=n())
+```
+
+```{r}
+allDataALT %>% group_by(cntry_c, brl_tnd, plot_id, site_id, last_nm) %>%
+  summarize(n=n())
+```
+
+```{r}
+allDataALT %>% group_by(cntry_c, brl_tnd, fire_yr, last_nm) %>%
   summarize(n=n())
 ```

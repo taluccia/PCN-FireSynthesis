@@ -77,7 +77,9 @@ f12_dates = f12 %>%
 f12_dates
 ```
 
-
+```{r}
+f12_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/paulson.csv')
+```
 ```{r}
 f12_dates %>% distinct(julianDate, year, date)
 ```

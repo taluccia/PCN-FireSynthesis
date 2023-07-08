@@ -87,7 +87,9 @@ f11_dates
 f11_dates %>% filter_all(any_vars(is.na(.))) 
 ```
 
-
+```{r}
+f11_dates %>% distinct(site_id, plot_id, burn_unburn) %>% write.csv(., '../outputs/pairs/olefeldt.csv')
+```
 
 ```{r}
 f11_dates %>% distinct(julianDate, year, date)
