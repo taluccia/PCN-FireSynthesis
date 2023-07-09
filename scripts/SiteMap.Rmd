@@ -12,6 +12,8 @@ rm(list=ls())
 
 # Overview
 
+Notes:
+[Better colors for Mapping](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/better-colors-for-better-mapping/)
 # Packages
 ```{r}
 library(tidyverse)
@@ -20,6 +22,8 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(RColorBrewer)
 library(cowplot)
+library(ggpubr)
+library(ggnewscale)
 ```
 # Projection
 ```{r}
@@ -66,8 +70,41 @@ arctic = circle %>% filter(name=="Arctic Circle")
 ```
 
 
+# Centroid of grouped points
 
+## last name
+```{r}
+(
+centroids_sf <- points %>%
+  group_by(cntry_c, brl_tnd, last_nm) %>% 
+  summarize(geometry = st_union(geometry)) %>% 
+  st_centroid
+)
+```
+## Site
+```{r}
+(
+siteCentroids_sf <- points %>%
+  group_by(cntry_c, brl_tnd, site_id, last_nm) %>% 
+  summarize(geometry = st_union(geometry)) %>% 
+  st_centroid
+)
+```
+```{r}
+points$distance_to_centroid <- as.vector(st_distance(st_centroid(siteCentroids_sf), points))
 
+points
+```
+
+## Fire year
+```{r}
+(
+fireCentroids_sf <- points %>%
+  group_by(cntry_c, brl_tnd, fire_yr, last_nm) %>% 
+  summarize(geometry = st_union(geometry)) %>% 
+  st_centroid
+)
+```
 # Filter
 ## Countries
 
@@ -138,6 +175,9 @@ perma_pp = st_transform(perma_con, crs = polarProj)
 perma_dis_pp = st_transform(perma_dis, crs = polarProj)
 perma_spo_pp = st_transform(perma_spo, crs = polarProj)
 permafrost1_pp = st_transform(permafrost1, crs = polarProj)
+centroids_pp = st_transform(centroids_sf, crs = polarProj)
+siteCentroids_pp = st_transform(siteCentroids_sf, crs = polarProj)
+fireCentroids_pp = st_transform(fireCentroids_sf, crs = polarProj)
 ```
 
 
@@ -223,7 +263,7 @@ sa_map <- ggplot() +
   geom_sf(data = perma_dis_pp, fill = "#98eff9", colour= NA) +
   geom_sf(data = perma_spo_pp, fill = "#d7e8ed", colour= NA) +
  
-   geom_sf(data = points_pp, aes(colour= last_nm)) +
+   geom_sf(data = siteCentroids_pp, aes(colour= last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
   scale_color_manual(values=lastnm_palette2) +
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
@@ -239,7 +279,7 @@ sa_map
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
     geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
  
-   geom_sf(data = points_pp, aes(colour= last_nm, shape =last_nm)) +
+   geom_sf(data = centroids_pp, aes(colour= last_nm, shape =last_nm)) +
   geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
   scale_color_manual(values=lastnm_palette, name="Data contributor") +
     scale_shape_manual(values = lastnm_shape, name="Data contributor") +
@@ -327,19 +367,24 @@ shape = 21, colour = "black", fill = "white",
   map2 <- ggplot() +
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
     geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA) +
- 
-   geom_sf(data = sumpts_pp, aes(colour= brl_tnd)) +
-  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
-  scale_color_manual(values=brltnd_palette, name="Biome") +
+    geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
     scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporadic"),
-                      name = "Permafrost") +
+                     name = "Permafrost") +
+    
+ new_scale_color() +
+   new_scale_fill() +
+    geom_sf(data = fireCentroids_pp, aes(fill=brl_tnd, color=brl_tnd),  size = 4, pch=21, stroke =1.8) +# 40
+          scale_fill_manual(name="", values=c("#437a75", "#bf7860"))  +
+          scale_color_manual(name="", values = c("#afbfa2", "#d9d78c")) +
+   
   coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3808650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
   theme(plot.margin=unit(c(0,0,0,0), "mm"))  +
     theme(legend.position = c(.9,.16), 
           legend.box.background = element_rect(color="white", size=1),
-          legend.key = element_rect(fill = "white"))
+          legend.key = element_rect(fill = "white")) 
+   
 )
 ```
 

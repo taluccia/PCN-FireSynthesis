@@ -21,6 +21,7 @@ Figures looking at measured versus predicted
 library(tidyverse)
 library(lubridate)
 library(ggpubr)
+library(ggnewscale)
 ```
 
 # Plot themes
@@ -118,8 +119,8 @@ forDepth %>%
 ( fig1 = forDates %>% 
     filter(thw_ctv=="thaw") %>% 
     mutate(msrPrd = fct_recode(msrPrd,
-                                  "Measured" = "dateMsr",
-                                  "Predicted" = "datePrd")) %>%
+                                  "Measured thaw" = "dateMsr",
+                                  "Predicted ALT" = "datePrd")) %>%
 ggplot(., aes(x = msrPrd, y=date)) +
   geom_violin() + 
   
@@ -135,8 +136,8 @@ ggplot(., aes(x = msrPrd, y=date)) +
 ( fig2 = forDates %>% 
     filter(thw_ctv=="active") %>% 
     mutate(msrPrd = fct_recode(msrPrd,
-                                  "Measured" = "dateMsr",
-                                  "Predicted" = "datePrd")) %>%
+                                  "Measured active" = "dateMsr",
+                                  "Predicted ALT" = "datePrd")) %>%
 ggplot(., aes(x = msrPrd, y=date)) +
   geom_violin() + 
   
@@ -161,8 +162,8 @@ ggsave("../figures/DatesMeasurePredictViolin.png", plot = comboDates, width = 3,
 ( fig3 = forDepth %>% 
     filter(thw_ctv=="thaw") %>% 
     mutate(msrPrd = fct_recode(msrPrd,
-                                  "Measured" = "dpthMsr",
-                                  "Predicted" = "dpthPrd")) %>%
+                                  "Measured thaw" = "dpthMsr",
+                                  "Predicted ALT" = "dpthPrd")) %>%
 ggplot(., aes(x = msrPrd, y=depth)) +
   geom_violin() + 
   
@@ -178,8 +179,8 @@ ggplot(., aes(x = msrPrd, y=depth)) +
 ( fig4 = forDepth %>% 
     filter(thw_ctv=="active") %>% 
     mutate(msrPrd = fct_recode(msrPrd,
-                                  "Measured" = "dpthMsr",
-                                  "Predicted" = "dpthPrd")) %>%
+                                  "Measured active" = "dpthMsr",
+                                  "Predicted ALT" = "dpthPrd")) %>%
 ggplot(., aes(x = msrPrd, y=depth)) +
   geom_violin() + 
   
@@ -208,8 +209,8 @@ ggsave("../figures/DepthsMeasurePredictViolin.png", plot = comboDepths, width = 
 ```{r}
 ( paired2 = sampleActive %>% 
     mutate(msrPrd = fct_recode(msrPrd,
-                                  "Measured" = "dpthMsr",
-                                  "Predicted" = "dpthPrd")) %>%
+                                  "Measured active" = "dpthMsr",
+                                  "Predicted ALT" = "dpthPrd")) %>%
     ggplot(., aes(x = msrPrd, y=depth)) +
 
   geom_line(aes(group = paired),  linetype = "dashed") +
