@@ -65,8 +65,7 @@ f5$slope <- read.csv(f[5], header = TRUE, colClasses = "character")[,20]
 f5_dates = f5 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) %>%
-  dplyr::select(-notes) %>%
-  drop_na(.)
+  dplyr::select(-notes) 
 
 f5_dates
 ```

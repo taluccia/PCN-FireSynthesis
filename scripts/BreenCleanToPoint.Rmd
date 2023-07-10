@@ -58,8 +58,8 @@ str(f2)
 ```{r}
 f2_dates = f2 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
-  mutate(julianDate = yday(date)) %>%
-  drop_na(.)
+  mutate(julianDate = yday(date)) 
+
 
 f2_dates
 ```
