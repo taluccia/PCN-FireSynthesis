@@ -1,0 +1,426 @@
+---
+title: "Manuscript Maps"
+author: "Anna Talucci"
+date: "2023-07-11"
+output: html_document
+---
+
+---
+title: "Map"
+author: "Anna Talucci"
+date: "2023-03-20"
+output: html_document
+---
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+
+# Overview
+
+Notes:
+[Better colors for Mapping](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/better-colors-for-better-mapping/)
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(RColorBrewer)
+library(cowplot)
+library(ggpubr)
+library(ggnewscale)
+library(scales)
+library(ggrepel)
+```
+# Projection
+[Some projection info]https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection)
+```{r}
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+```
+
+# Data
+## Points
+
+```{r}
+points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
+```
+
+```{r}
+ptsEco = st_read("../data/allPoints/PtsEcozones.shp", "PtsEcozones")
+```
+
+## World map
+https://datacatalog.worldbank.org/dataset/world-bank-official-boundaries
+
+```{r}
+wrld = st_read("../data/shapefiles/world/WB_countries_Admin0_10m.shp", "WB_countries_Admin0_10m")
+```
+
+
+## permafrost
+```{r}
+permafrost = st_read("../data/shapefiles/permafrost/permaice.shp", "permaice")
+```
+
+```{r}
+head(permafrost)
+```
+
+# Arctic Circle 
+Arctic Circle shapefile came from [Natural Earth](https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-geographic-lines/)
+
+```{r}
+circle = st_read("../data/ne_110m_geographic_lines/ne_110m_geographic_lines.shp", "ne_110m_geographic_lines") 
+```
+```{r}
+arctic = circle %>% filter(name=="Arctic Circle")
+```
+
+
+
+# Filter
+## Countries
+
+```{r}
+unique(wrld$CONTINENT)
+```
+
+
+```{r}
+target_cnty = c("Mongolia", "Kazakhstan", "Japan", "People's Republic of China", "Russia", "Uzbekistan", "Canada", "Greenland", "United States of America", "Czech Republic", "Germany", "Estonia", "Latvia", "Norway", "Sweden", "Finland", "Denmark",         "Romania",                             
+ "Hungary",                              "Slovakia",                             "Poland",                              
+"Ireland",                              "United Kingdom",                       "Greece",                              
+ "Austria" )
+```
+
+```{r}
+target_iso = c("MN", "RU", "CN", "KZ", "KG", "UZ", "JP", "TM")
+```
+
+```{r}
+target = c("Asia", "Europe", "North America")
+```
+
+Filter for all
+```{r}
+nh  = wrld %>% 
+  filter(CONTINENT %in% target) %>%
+  dplyr::select( OBJECTID:FORMAL_EN, NAME_EN, ISO_A2, CONTINENT:REGION_WB, Shape_Leng:geometry) 
+```
+
+```{r}
+unique(nh$NAME_EN)
+```
+
+```{r}
+nh
+```
+
+## Permafrost
+```{r}
+perma_con = permafrost %>% 
+  filter(EXTENT =="C") 
+```
+
+```{r}
+perma_dis = permafrost %>% 
+  filter(EXTENT =="D") 
+```
+
+```{r}
+perma_spo = permafrost %>% 
+  filter(EXTENT =="S") 
+```
+
+```{r}
+permafrost1 = permafrost %>% 
+  filter(EXTENT %in% c("C", "D", "S")) 
+```
+
+# Reproject
+
+```{r}
+nh_pp = st_transform(nh, crs = polarProj)
+
+points_pp = st_transform(points, crs = polarProj)
+ptsEco_pp = st_transform(ptsEco, crs = polarProj)
+artic_pp = st_transform(arctic, crs = polarProj)
+perma_pp = st_transform(perma_con, crs = polarProj)
+perma_dis_pp = st_transform(perma_dis, crs = polarProj)
+perma_spo_pp = st_transform(perma_spo, crs = polarProj)
+permafrost1_pp = st_transform(permafrost1, crs = polarProj)
+```
+
+
+
+```{r}
+nh_pp
+```
+
+```{r}
+nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
+                                    ymin = 45, ymax = 90)
+```
+
+```{r}
+points_pp
+```
+
+
+# grouped points
+```{r}
+(eco_groupedCt <- ptsEco_pp %>% st_drop_geometry() %>%
+                group_by(ECO_NAME) %>%
+                summarise(count = n()) )
+```
+```{r}
+eco_grouped <- ptsEco_pp %>%
+                group_by(ECO_NAME) %>%
+                summarise(st_union(geometry)) %>%
+                st_centroid() %>%
+  left_join(., eco_groupedCt, by= 'ECO_NAME') %>%
+  mutate(total = sum(count)) %>%
+  mutate(prop = round(count/total, 5)) %>%
+  mutate(percent = round(prop*100, 2))
+```
+
+```{r}
+eco_grouped
+```
+
+# Palettes
+```{r}
+library(RColorBrewer)
+brewer.pal(n=12,"Set3")
+```
+```{r}
+brewPal = c("#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072",  "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD", "#CCEBC5", "#FFED6F")
+```
+```{r}
+lastnm_palette = c("#FF7F00", "#CAB2D6", '#ed217c', "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+
+```{r}
+lastnm_shape = c(15, 16, 17, 18, 15, 16, 17, 18,15, 16, 17, 18, 15, 16, 17)
+```
+
+```{r}
+lastnm_size = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+```
+
+```{r}
+lastnm_palette2 = c("#D95F02", "#E7298A", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+
+```{r}
+lastnm_palette2 = c("#003f5c", "#2f4b7c", "#665191", "#a05195", "#d45087", "#f95d6a", "#ff7c43", "#ffa600", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928", '#1b998b', '#ed217c', '#ff9b71')
+```
+```{r}
+lastnm_palette3 = c("#00876c", 
+'#42986f',
+'#68a973',
+'#8cb978',
+'#b0c880',
+'#d3d78c',
+'#f7e59b',
+"#FFFF99",
+'#f4cc80',
+'#f1b26b',
+'#ed975c',
+"#FF7F00",
+'#e77b53',
+'#df5e50',
+'#de425b')
+```
+
+```{r}
+ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
+```
+```{r}
+brewer.pal(12, "Paired")
+```
+
+```{r}
+permafrost_palette = c('#71A6D1', '#99C4E1', '#C0E2F0')
+```
+
+```{r}
+brltnd_palette = c('#4a6741', '#3d3021')
+```
+xlim = c(-3302324, 2312498), ylim = c(-1108650,  3102452) 
+ymin: -25426070 xmax: 28628080 ymax: 8108557
+ xmin:  ymin:  xmax:  ymax: 
+ 
+ scale_color_manual(values = c("A" ="#fdae61","B" = "#ff6347", "C" = "#fee08b"), labels = c( "A" ="Tweedsmuir fire","B" = "Entiako fire", "C" = "Chelaslie fire" ), name = "Fire perimeters") +
+
+# Maps
+
+```{r fig.height=5, fig.width=6}
+ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
+  scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+   
+  geom_sf(data = eco_grouped, aes(colour= ECO_NAME, size = percent)) +
+    scale_color_manual(values=ecoPalette) +
+    scale_size_area( breaks = c(1, 10, 20, 30, 40 , 50), limits = c(0, 50)) +
+    
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + theme(legend.key=element_blank())
+
+```
+```{r fig.height=5, fig.width=6}
+ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  
+   geom_sf(data = ptsEco_pp, aes(color = ECO_NAME, shape =last_nm)) +
+  scale_color_manual(values=ecoPalette, name="") +
+    scale_shape_manual(values = lastnm_shape, name="Data contributor") +
+    
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + theme(legend.key=element_blank())
+
+```
+
+
+# Fiddle with Points
+```{r}
+ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+  
+     new_scale_color() +
+  geom_sf(data = eco_grouped, aes( fill = ECO_NAME, color=ECO_NAME, size=percent),  pch=21, stroke =1.8) +
+    scale_fill_manual(values=ecoPalette) +
+  scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black")) +
+  scale_size(range = c(9, 14), # point size range
+             breaks = c(1, 10, 20, 30, 40 , 50), limits = c(0, 50))+
+  geom_sf_text(data = eco_grouped, aes(label = percent), size=3) +
+ coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + theme(legend.position = "none")
+```
+
+# Main Map no Legend
+
+## Zoom Level
+```{r}
+zoom_to <- c(0, 90)  # Geographic North pole
+
+zoom_level <- 3
+
+lon_span <- 360 / 2^zoom_level
+lat_span <- 180 / 2^zoom_level
+```
+
+```{r}
+lon_bounds <- c(zoom_to[1] - lon_span / 2, zoom_to[1] + lon_span / 2)
+lat_bounds <- c(zoom_to[2] - lat_span / 2, zoom_to[2] + lat_span / 2)
+```
+coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
+
+
+## Map
+```{r}
+ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA, alpha=.75 ) +
+  scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+   
+  new_scale_fill() +
+  geom_sf(data = eco_grouped, aes( fill = ECO_NAME, color=ECO_NAME, size=percent),  pch=21, stroke =1.8, alpha=.65) +
+    scale_fill_manual(values=ecoPalette) +
+  scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black")) +
+  scale_size(range = c(9, 14), # point size range
+             breaks = c(1, 10, 20, 30, 40 , 50), limits = c(0, 50))+
+  geom_sf_text(data = eco_grouped, aes(label = percent), size=3) +
+    
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "none", 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank())
+
+```
+
+# Legend
+```{r fig.height=5, fig.width=6}
+(
+  ContributorLegend <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+ 
+   geom_sf(data = points_pp, aes(colour= last_nm, shape =last_nm)) +
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+  scale_color_manual(values=lastnm_palette, name="Data contributor") +
+    scale_shape_manual(values = lastnm_shape, name="Data contributor") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7"),
+        plot.margin=unit(c(0,0,0,0), "mm"),
+        legend.key=element_blank(),
+        legend.position = "bottom",
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7)) + 
+  guides(fill=guide_legend(ncol=5,bycol=TRUE))
+)
+```
+
+```{r fig.height=5, fig.width=6}
+(
+  permafrostLegend <- ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA ) +
+ 
+  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+    scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporadic"),
+                      name = "Permafrost") +
+  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7"),
+        plot.margin=unit(c(0,0,0,0), "mm"),
+        legend.key=element_blank(),
+        legend.position = "bottom",
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7)) + 
+  guides(fill=guide_legend(ncol=5,byrow=TRUE))
+)
+```
+
+
+
+
+
+
+
+# Cowplot
+```{r}
+legend_permafrost = cowplot::get_legend(permafrostLegend)
+legend_sites = cowplot::get_legend(ContributorLegend)
+```
+
+```{r}
+( pairLegend = plot_grid(legend_permafrost, legend_sites, ncol = 1))
+```
+```{r fig.height=5, fig.width=6}
+(mapFigure = plot_grid(mapNoLegend, legend_permafrost, legend_sites, ncol = 1, rel_heights = c(1.1, .1, .1)) )
+```
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNMapSitesContributors.png", plot = mapFigure, dpi = 600, bg='white')
+```
+

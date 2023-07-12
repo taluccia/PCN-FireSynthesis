@@ -1,0 +1,84 @@
+---
+title: "Add Ecozone"
+author: "Anna Talucci"
+date: "2023-07-11"
+output: html_document
+---
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+
+# Overview
+
+Notes:
+[Better colors for Mapping](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/better-colors-for-better-mapping/)
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(RColorBrewer)
+library(cowplot)
+library(ggpubr)
+library(ggnewscale)
+```
+# Projection
+```{r}
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+```
+
+# Data
+
+## Points
+
+```{r}
+points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
+```
+
+## WWF
+```{r}
+wwf = st_read("../data/wwfEcozones/wwf_terr_ecos.shp", "wwf_terr_ecos")
+```
+
+
+# WWF Data 
+```{r}
+wwf 
+```
+```{r}
+wwf %>% st_drop_geometry() %>% distinct(REALM)
+```
+
+
+# Select Realms
+```{r}
+arctic = wwf %>% filter(REALM %in% c("PA", "NA")) %>% dplyr::select(OBJECTID, ECO_NAME, REALM, BIOME, ECO_NUM, ECO_ID, geometry)
+```
+
+```{r}
+arctic
+```
+```{r}
+plot(st_geometry(arctic))
+```
+
+
+# Add Ecoregions to points
+
+```{r}
+combineData = st_join(points, arctic) 
+```
+
+```{r}
+combineData
+```
+
+
+### write to shapefile
+```{r eval=FALSE, include=FALSE}
+st_write(combineData, "../outputs/PtsEcozones.shp", driver="ESRI Shapefile")
+```
