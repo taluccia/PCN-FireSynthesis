@@ -50,7 +50,9 @@ points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
 ```{r}
 ptsEco = st_read("../data/allPoints/PtsEcozones.shp", "PtsEcozones")
 ```
-
+```{r}
+ptsEco 
+```
 ## World map
 https://datacatalog.worldbank.org/dataset/world-bank-official-boundaries
 
