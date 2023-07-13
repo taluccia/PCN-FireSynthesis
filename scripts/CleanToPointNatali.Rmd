@@ -52,34 +52,34 @@ f
 
 ## Natali
 ```{r}
-f9 <- read.csv(f[9], header = TRUE)
-f9
+f10 <- read.csv(f[10], header = TRUE)
+f10
 ```
 
 # fix incorrect logical columns
 ```{r}
 # organic depth is missing, but set to NA
-f9$organic_depth <- as.numeric(f9$organic_depth)
+f10$organic_depth <- as.numeric(f10$organic_depth)
 
 # fix incorrect logical columns
-f9[,c(20:22)] <- read.csv(f[9], header = TRUE, colClasses = "character")[,c(20:22)]
+f10[,c(20:22)] <- read.csv(f[10], header = TRUE, colClasses = "character")[,c(20:22)]
 
 # remove characters from thaw depth and convert to numeric
-f9$thaw_depth <- gsub("+", "", f9$thaw_depth, fixed = TRUE)
-f9$thaw_depth <- as.numeric(gsub(">", "", f9$thaw_depth, fixed = TRUE))
-f9$long = as.numeric(gsub(",","",f9$long))
+f10$thaw_depth <- gsub("+", "", f10$thaw_depth, fixed = TRUE)
+f10$thaw_depth <- as.numeric(gsub(">", "", f10$thaw_depth, fixed = TRUE))
+f10$long = as.numeric(gsub(",","",f10$long))
 ```
 
 ```{r}
-str(f9)
+str(f10)
 ```
 
 ```{r}
-f9_dates = f9 %>%
+f10_dates = f10 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) 
 
-f9_dates
+f10_dates
 ```
 %>%
   drop_na(day) %>%
@@ -91,108 +91,108 @@ f9_dates
 
 
 ```{r}
-unique(f9_dates$site_id)
+unique(f10_dates$site_id)
 ```
 ```{r}
-f9_dates %>% group_by(thaw_active, site_id) %>% count(.)
+f10_dates %>% group_by(thaw_active, site_id) %>% count(.)
 ```
 There are 732 measurements as thaw depth from site_id YKD
 
 ```{r}
-f9_dates %>% filter(thaw_active == "T")
+f10_dates %>% filter(thaw_active == "T")
 ```
 # Fix longitude missing negative issue
 ```{r}
-( f9_long_fix = f9_dates %>% filter(long > 0) %>% mutate(across(long, ~ .x*(-1))) )
+( f10_long_fix = f10_dates %>% filter(long > 0) %>% mutate(across(long, ~ .x*(-1))) )
 ```
 Grab existing negative longitude points
 ```{r}
-( f9_long_correct = f9_dates %>% filter(long < 0) )
+( f10_long_correct = f10_dates %>% filter(long < 0) )
 ```
 Combine correct and fixed longitude
 ```{r}
-( f9_all_long = f9_long_correct %>% bind_rows(f9_long_fix) )
+( f10_all_long = f10_long_correct %>% bind_rows(f10_long_fix) )
 ```
 
 ```{r}
-f9_all_long %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/natali.csv')
+f10_all_long %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/natali.csv')
 ```
 ```{r}
-f9_all_long %>% filter(site_id =="YKD")
+f10_all_long %>% filter(site_id =="YKD")
 ```
 
 ```{r}
-f9_all_long %>% distinct(julianDate, year, date)
+f10_all_long %>% distinct(julianDate, year, date)
 ```
 ```{r}
-f9_all_long %>% filter_all(any_vars(is.na(.))) 
+f10_all_long %>% filter_all(any_vars(is.na(.))) 
 ```
 
 # Split by active & thaw
 ```{r}
-f9_all = f9_all_long
+f10_all = f10_all_long
 
-f9_thaw = f9_all_long %>% 
+f10_thaw = f10_all_long %>% 
   filter(thaw_active == "T") %>%
   drop_na(long) %>%
   drop_na(lat)
 
-f9_active = f9_all_long %>% 
+f10_active = f10_all_long %>% 
   filter(thaw_active == "A") %>%
   drop_na(long) %>%
   drop_na(lat)
 ```
 
 ```{r}
-unique(f9_active$date)
+unique(f10_active$date)
 ```
 Aug 2
 Sept 6
 Sept 15, 16, 17, 18, 19
 
 ```{r}
-unique(f9_thaw$date)
+unique(f10_thaw$date)
 ```
 
 ```{r}
-unique(f9_active$julianDate)
+unique(f10_active$julianDate)
 ```
 
 ```{r}
-unique(f9_thaw$date)
+unique(f10_thaw$date)
 ```
 
 ```{r}
-unique(f9_thaw$julianDate)
+unique(f10_thaw$julianDate)
 ```
 
 ```{r}
-f9_active %>% 
+f10_active %>% 
   filter(is.na(long))
 
-f9_active %>% 
+f10_active %>% 
   filter(is.na(lat))
 ```
 
 # Save clean data
 ```{r}
-write_csv(f9_active, "../outputs/CleanActive/NataliCleanActive.csv")
+write_csv(f10_active, "../outputs/CleanActive/NataliCleanActive.csv")
 ```
 
 # Create points shapefile
 
-## For F9
+## For f10
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f9_thaw_pts = st_as_sf(f9_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f9_active_pts = st_as_sf(f9_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f9_pts = st_as_sf(f9_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_thaw_pts = st_as_sf(f10_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_active_pts = st_as_sf(f10_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f10_pts = st_as_sf(f10_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f9_thaw_pts, "../outputs/ThawPoints/Natali_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f9_active_pts, "../outputs/ActivePoints/Natali_active_pts.shp", driver="ESRI Shapefile")
-st_write(f9_pts, "../outputs/allPoints/Natali_pts.shp", driver="ESRI Shapefile")
+st_write(f10_thaw_pts, "../outputs/ThawPoints/Natali_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f10_active_pts, "../outputs/ActivePoints/Natali_active_pts.shp", driver="ESRI Shapefile")
+st_write(f10_pts, "../outputs/allPoints/Natali_pts.shp", driver="ESRI Shapefile")
 ```

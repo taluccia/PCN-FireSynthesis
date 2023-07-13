@@ -50,66 +50,66 @@ f
 
 ## Veraverbeke
 ```{r}
-f15 <- read.csv(f[15], header = TRUE)
-f15
+f16 <- read.csv(f[16], header = TRUE)
+f16
 ```
 ```{r}
-str(f15)
+str(f16)
 ```
 # fix incorrect logical columns
 ```{r}
-f15$thaw_active <- read.csv(f[15], header = TRUE, colClasses = "character")[,19]
+f16$thaw_active <- read.csv(f[16], header = TRUE, colClasses = "character")[,19]
 ```
 
 ```{r}
-f15_dates = f15 %>%
+f16_dates = f16 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) 
 
-f15_dates
+f16_dates
 ```
 
 ```{r}
-f15_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/veraverbeke.csv')
+f16_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/veraverbeke.csv')
 ```
 ```{r}
-f15_dates %>% distinct(julianDate, year, date)
+f16_dates %>% distinct(julianDate, year, date)
 ```
 
 # Split by active & thaw
 ```{r}
 (
-  f15_all = f15_dates %>% 
+  f16_all = f16_dates %>% 
   drop_na(long) %>%
   drop_na(lat)
 )
 
 ( 
-  f15_thaw = f15_dates %>% 
+  f16_thaw = f16_dates %>% 
   filter(thaw_active == "T") 
 )
 
 
 
 (
-  f15_active = f15_dates %>% 
+  f16_active = f16_dates %>% 
   filter(thaw_active == "A") 
 )
 ```
 
 # Create points shapefile
 
-## For F15
+## For f16
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f15_thaw_pts = st_as_sf(f15_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f15_pts = st_as_sf(f15_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f16_thaw_pts = st_as_sf(f16_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f16_pts = st_as_sf(f16_all, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f15_thaw_pts, "../outputs/ThawPoints/Veraverbeke_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f16_thaw_pts, "../outputs/ThawPoints/Veraverbeke_thaw_pts.shp", driver="ESRI Shapefile")
 
-st_write(f15_pts, "../outputs/allPoints/Veraverbeke_pts.shp", driver="ESRI Shapefile")
+st_write(f16_pts, "../outputs/allPoints/Veraverbeke_pts.shp", driver="ESRI Shapefile")
 ```

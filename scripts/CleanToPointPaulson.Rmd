@@ -1,9 +1,11 @@
 ---
-title: "Rocha Clean To Point"
+title: "Paulson Clean to Point"
 author: "Anna Talucci"
 date: '2022-12-11'
 output: html_document
 ---
+
+
 
 # clear environment
 ```{r}
@@ -47,7 +49,7 @@ f
 
 
 
-## Rocha
+## Paulson
 ```{r}
 f13 <- read.csv(f[13], header = TRUE)
 f13
@@ -56,37 +58,28 @@ f13
 # fix incorrect logical columns
 ```{r}
 # fix incorrect logical columns
-f13$slope <- read.csv(f[13], header = TRUE, colClasses = "character")[,20]
-```
+f13$thaw_active <- read.csv(f[13], header = TRUE, colClasses = "character")[,19]
 
-```{r}
-# organic depth is missing, but set to NA
-f13$organic_depth <- as.numeric(f13$organic_depth)
-```
+f13 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
 
-```{r}
-# convert thaw depth to numeric - blank cells have a period, and will be converted to NA
-f13$thaw_depth <- as.numeric(f13$thaw_depth)
 ```
 
 ```{r}
 str(f13)
-```
+``` 
 
 ```{r}
 f13_dates = f13 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) %>%
-  dplyr::select(-notes)
-
+  dplyr::select(-notes) 
 
 f13_dates
 ```
 
 ```{r}
-f13_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/rocha.csv')
+f13_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/paulson.csv')
 ```
-
 ```{r}
 f13_dates %>% distinct(julianDate, year, date)
 ```
@@ -104,33 +97,21 @@ f13_active = f13_dates %>%
 f13_active
 ```
 
-```{r}
-unique(f13_active$date)
-```
-
-```{r}
-unique(f13_thaw$date)
-```
-# Save clean data
-```{r}
-write_csv(f13_active, "../outputs/CleanActive/RochaCleanActive.csv")
-```
-
 # Create points shapefile
 
-## For F13
+## For f13
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
 f13_thaw_pts = st_as_sf(f13_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f13_active_pts = st_as_sf(f13_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
-
 f13_pts = st_as_sf(f13_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
+```{r eval=FALSE, include=FALSE}
+st_write(f13_thaw_pts, "../outputs/ThawPoints/Paulson_thaw_pts.shp", driver="ESRI Shapefile")
+```
+
 ```{r}
-st_write(f13_thaw_pts, "../outputs/ThawPoints/Rocha_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f13_active_pts, "../outputs/ActivePoints/Rocha_active_pts.shp", driver="ESRI Shapefile")
-st_write(f13_pts, "../outputs/allPoints/Rocha_pts.shp", driver="ESRI Shapefile")
+st_write(f13_pts, "../outputs/allPoints/Paulson_pts.shp", driver="ESRI Shapefile")
 ```

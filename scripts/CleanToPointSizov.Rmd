@@ -1,9 +1,10 @@
 ---
-title: "Paulson Clean to Point"
+title: "Sizov Clean To Point"
 author: "Anna Talucci"
 date: '2022-12-11'
 output: html_document
 ---
+
 
 
 
@@ -49,69 +50,58 @@ f
 
 
 
-## Paulson
+## Sizov
 ```{r}
-f12 <- read.csv(f[12], header = TRUE)
-f12
+f15 <- read.csv(f[15], header = TRUE)
+f15
+```
+```{r}
+str(f15)
 ```
 
-# fix incorrect logical columns
-```{r}
-# fix incorrect logical columns
-f12$thaw_active <- read.csv(f[12], header = TRUE, colClasses = "character")[,19]
-
-f12 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
-
-```
 
 ```{r}
-str(f12)
-``` 
-
-```{r}
-f12_dates = f12 %>%
+f15_dates = f15 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) %>%
-  dplyr::select(-notes) 
+  dplyr::select(-notes)
 
-f12_dates
+f15_dates
 ```
 
+
 ```{r}
-f12_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/paulson.csv')
+f15_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/sizov.csv')
 ```
 ```{r}
-f12_dates %>% distinct(julianDate, year, date)
+f15_dates %>% distinct(julianDate, year, date)
 ```
 
 # Split by active & thaw
 ```{r}
-f12_thaw = f12_dates %>% 
+f15_thaw = f15_dates %>% 
   filter(thaw_active == "T") 
 
-f12_thaw
+f15_thaw
 
-f12_active = f12_dates %>% 
+f15_active = f15_dates %>% 
   filter(thaw_active == "A") 
 
-f12_active
+f15_active
 ```
 
 # Create points shapefile
 
-## For F12
+## For f15
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f12_thaw_pts = st_as_sf(f12_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f12_pts = st_as_sf(f12_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f15_active_pts = st_as_sf(f15_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f15_pts = st_as_sf(f15_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
-```{r eval=FALSE, include=FALSE}
-st_write(f12_thaw_pts, "../outputs/ThawPoints/Paulson_thaw_pts.shp", driver="ESRI Shapefile")
-```
-
 ```{r}
-st_write(f12_pts, "../outputs/allPoints/Paulson_pts.shp", driver="ESRI Shapefile")
+st_write(f15_active_pts, "../outputs/ActivePoints/Sizov_active_pts.shp", driver="ESRI Shapefile")
+st_write(f15_pts, "../outputs/allPoints/Sizov_pts.shp", driver="ESRI Shapefile")
 ```

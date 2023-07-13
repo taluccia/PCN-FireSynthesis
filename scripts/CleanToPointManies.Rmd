@@ -50,76 +50,76 @@ f
 
 ## Manies
 ```{r}
-f8 <- read.csv(f[8], header = TRUE)
-f8
+f9 <- read.csv(f[9], header = TRUE)
+f9
 ```
 ```{r}
-str(f8)
+str(f9)
 ```
 # fix incorrect logical columns
 ```{r}
-f8$slope <- read.csv(f[8], header = TRUE, colClasses = "character")[,20]
+f9$slope <- read.csv(f[8], header = TRUE, colClasses = "character")[,20]
 
-f8$organic_depth <- read.csv(f[8], header = TRUE, na.strings = "unk")[,15]
+f9$organic_depth <- read.csv(f[8], header = TRUE, na.strings = "unk")[,15]
 ```
 
 ```{r}
-f8_dates = f8 %>%
+f9_dates = f9 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) %>%
   dplyr::select(-notes)
 
-f8_dates
+f9_dates
 ```
 
 
 ```{r}
-f8_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/manies.csv')
+f9_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., '../outputs/pairs/manies.csv')
 ```
 
 
 
 ```{r}
-f8_dates %>% distinct(site_id, thaw_active, julianDate, year, date)
+f9_dates %>% distinct(site_id, thaw_active, julianDate, year, date)
 ```
 Apr 1  to September 30 (91-273)
 ```{r}
-ggplot(f8_dates, aes(x=lat, y=long, color=thaw_active)) +
+ggplot(f9_dates, aes(x=lat, y=long, color=thaw_active)) +
   geom_jitter()
 ```
 
 # Split by active & thaw
 ```{r}
-f8_thaw = f8_dates %>% 
+f9_thaw = f9_dates %>% 
   filter(thaw_active == "T") 
 
-f8_thaw
+f9_thaw
 
-f8_active = f8_dates %>% 
+f9_active = f9_dates %>% 
   filter(thaw_active == "A") 
 
-f8_active
+f9_active
 ```
 
 # Save clean data
 ```{r}
-write_csv(f8_active, "../outputs/CleanActive/ManiesCleanActive.csv")
+write_csv(f9_active, "../outputs/CleanActive/ManiesCleanActive.csv")
 ```
 
 # Create points shapefile
 
-## For F8
+## For f9
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f8_thaw_pts = st_as_sf(f8_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f8_active_pts = st_as_sf(f8_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f8_pts = st_as_sf(f8_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f9_thaw_pts = st_as_sf(f9_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f9_active_pts = st_as_sf(f9_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f9_pts = st_as_sf(f9_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f8_thaw_pts, "../outputs/ThawPoints/Manies_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f8_active_pts, "../outputs/ActivePoints/Manies_active_pts.shp", driver="ESRI Shapefile")
-st_write(f8_pts, "../outputs/allPoints/Manies_pts.shp", driver="ESRI Shapefile")
+st_write(f9_thaw_pts, "../outputs/ThawPoints/Manies_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f9_active_pts, "../outputs/ActivePoints/Manies_active_pts.shp", driver="ESRI Shapefile")
+st_write(f9_pts, "../outputs/allPoints/Manies_pts.shp", driver="ESRI Shapefile")
 ```
