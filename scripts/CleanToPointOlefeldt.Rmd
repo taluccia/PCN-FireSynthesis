@@ -52,91 +52,91 @@ f
 
 ## Olefeldt
 ```{r}
-f11 <- read.csv(f[11], header = TRUE)
-f11
+f12 <- read.csv(f[12], header = TRUE)
+f12
 ```
 
 # fix incorrect logical columns
 ```{r}
 # fix incorrect logical columns
-f11$slope <- read.csv(f[11], header = TRUE, colClasses = "character")[,20]
+f12$slope <- read.csv(f[12], header = TRUE, colClasses = "character")[,20]
 
 # remove non-numeric characters from numeric vars
 # note we're loosing info on where Organic Layer Thickness is in excess of the entered value
-f11$organic_depth <- as.numeric(gsub(">", "",f11$organic_depth))
+f12$organic_depth <- as.numeric(gsub(">", "",f12$organic_depth))
 
-f11 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
+f12 %>% distinct(site_id,year,month,day,fire_id,burn_unburn)
 
 ```
 
 ```{r}
-str(f11)
+str(f12)
 ```
 
 ```{r}
-f11_dates = f11 %>%
+f12_dates = f12 %>%
   mutate(date = as.Date(with(., paste(year, month, day,sep="-")), "%Y-%m-%d")) %>%
   mutate(julianDate = yday(date)) %>%
   dplyr::select(-fire_id)
 
-f11_dates
+f12_dates
 ```
 
 
 ```{r}
-f11_dates %>% filter_all(any_vars(is.na(.))) 
+f12_dates %>% filter_all(any_vars(is.na(.))) 
 ```
 
 ```{r}
-f11_dates %>% distinct(site_id, plot_id, burn_unburn) %>% write.csv(., '../outputs/pairs/olefeldt.csv')
+f12_dates %>% distinct(site_id, plot_id, burn_unburn) %>% write.csv(., '../outputs/pairs/olefeldt.csv')
 ```
 
 ```{r}
-f11_dates %>% distinct(julianDate, year, date)
+f12_dates %>% distinct(julianDate, year, date)
 ```
 
 # Split by active & thaw
 ```{r}
-f11_thaw = f11_dates %>% 
+f12_thaw = f12_dates %>% 
   filter(thaw_active == "T") 
 
-f11_thaw
+f12_thaw
 
-f11_active = f11_dates %>% 
+f12_active = f12_dates %>% 
   filter(thaw_active == "A") 
 
-f11_active
+f12_active
 ```
 ```{r}
-unique(f11_active$date)
+unique(f12_active$date)
 ```
 ```{r}
-unique(f11_active$julianDate)
+unique(f12_active$julianDate)
 ```
 
 ```{r}
-unique(f11_thaw$date)
+unique(f12_thaw$date)
 ```
 # Save clean data
 ```{r}
-write_csv(f11_active, "../outputs/CleanActive/OlefeldtCleanActive.csv")
+write_csv(f12_active, "../outputs/CleanActive/OlefeldtCleanActive.csv")
 ```
 
 # Create points shapefile
 
-## For F11
+## For f12
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f11_thaw_pts = st_as_sf(f11_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f11_active_pts = st_as_sf(f11_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f12_thaw_pts = st_as_sf(f12_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f12_active_pts = st_as_sf(f12_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
 
-f11_pts = st_as_sf(f11_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f12_pts = st_as_sf(f12_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f11_thaw_pts, "../outputs/ThawPoints/Olefeldt_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f11_active_pts, "../outputs/ActivePoints/Olefeldt_active_pts.shp", driver="ESRI Shapefile")
-st_write(f11_pts, "../outputs/allPoints/Olefeldt_pts.shp", driver="ESRI Shapefile")
+st_write(f12_thaw_pts, "../outputs/ThawPoints/Olefeldt_thaw_pts.shp", driver="ESRI Shapefile")
+st_write(f12_active_pts, "../outputs/ActivePoints/Olefeldt_active_pts.shp", driver="ESRI Shapefile")
+st_write(f12_pts, "../outputs/allPoints/Olefeldt_pts.shp", driver="ESRI Shapefile")
 ```
