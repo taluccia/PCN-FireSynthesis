@@ -85,40 +85,25 @@ f11_dates %>% distinct(julianDate, year, date)
 f11_dates %>% distinct(site_id, thaw_active, julianDate, year, date)
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 ggplot(f11_dates, aes(x=lat, y=long, color=thaw_active)) +
   geom_point()
 ```
 
 
-# Split by active & thaw
+
+
+# Finish cleaning to match other datasets
 ```{r}
-f11_thaw = f11_dates %>% 
-  filter(thaw_active == "T") 
-
-f11_thaw
-
-f11_active = f11_dates %>% 
-  filter(thaw_active == "A") 
-
-f11_active
+( 
+  f11_clean = f11_dates %>%  
+  mutate(across(c(plot_id, site_id, fire_id), as.character)) %>% 
+  mutate(across(c(fire_year, organic_depth, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) %>%
+  rename(lastNm = last_name, cntryId = country_code, lon=long, biome=boreal_tundra, vegCC = veg_cover_class, siteId = site_id, plotId = plot_id, fireId = fire_id, fireYr = fire_year, distur = burn_unburn, orgDpth = organic_depth, msrDepth = thaw_depth, hitRock=hit_rock, gtProbe = gt_probe, msrType = thaw_active, topoPos = topo_position, jDate = julianDate) %>%
+    mutate(msrType = as.character(msrType))
+)
 ```
-```{r}
-unique(f11_active$date)
-```
-```{r}
-unique(f11_active$julianDate)
-```
-
-```{r}
-unique(f11_thaw$date)
-```
-
-# Save clean data
-```{r}
-write_csv(f11_active, "../outputs/CleanActive/ODonnellCleanActive.csv")
-```
-
 
 
 # Create points shapefile
@@ -126,15 +111,11 @@ write_csv(f11_active, "../outputs/CleanActive/ODonnellCleanActive.csv")
 ## For f11
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f11_thaw_pts = st_as_sf(f11_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f11_active_pts = st_as_sf(f11_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f11_pts = st_as_sf(f11_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f11_pts = st_as_sf(f11_clean, coords = c("lon","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f11_active_pts, "../outputs/ActivePoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f11_thaw_pts, "../outputs/ThawPoints/ODonnell_thaw_pts.shp", driver="ESRI Shapefile")
 st_write(f11_pts, "../outputs/allPoints/ODonnell_pts.shp", driver="ESRI Shapefile")
 ```

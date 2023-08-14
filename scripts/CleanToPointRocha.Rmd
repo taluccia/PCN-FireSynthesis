@@ -91,29 +91,16 @@ f14_dates %>% distinct(site_id, plot_id, fire_id, burn_unburn) %>% write.csv(., 
 f14_dates %>% distinct(julianDate, year, date)
 ```
 
-# Split by active & thaw
+# Finish cleaning to match other datasets
 ```{r}
-f14_thaw = f14_dates %>% 
-  filter(thaw_active == "T") 
-
-f14_thaw
-
-f14_active = f14_dates %>% 
-  filter(thaw_active == "A") 
-
-f14_active
-```
-
-```{r}
-unique(f14_active$date)
-```
-
-```{r}
-unique(f14_thaw$date)
-```
-# Save clean data
-```{r}
-write_csv(f14_active, "../outputs/CleanActive/RochaCleanActive.csv")
+( 
+  f14_clean = f14_dates %>%  
+  mutate(across(c(plot_id, site_id, fire_id), as.character)) %>% 
+  mutate(across(c(fire_year, organic_depth, slope, day), as.numeric)) %>% 
+    mutate(across(day, ~coalesce(., 0))) %>%
+  rename(lastNm = last_name, cntryId = country_code, lon=long, biome=boreal_tundra, vegCC = veg_cover_class, siteId = site_id, plotId = plot_id, fireId = fire_id, fireYr = fire_year, distur = burn_unburn, orgDpth = organic_depth, msrDepth = thaw_depth, hitRock=hit_rock, gtProbe = gt_probe, msrType = thaw_active, topoPos = topo_position, jDate = julianDate) %>%
+    mutate(msrType = as.character(msrType))
+)
 ```
 
 # Create points shapefile
@@ -121,16 +108,11 @@ write_csv(f14_active, "../outputs/CleanActive/RochaCleanActive.csv")
 ## For f14
 sf::st_as_sf(dd, coords = c("x","y"))
 ```{r}
-f14_thaw_pts = st_as_sf(f14_thaw, coords = c("long","lat"), crs = 4326, remove = FALSE)
-f14_active_pts = st_as_sf(f14_active, coords = c("long","lat"), crs = 4326, remove = FALSE)
-
-f14_pts = st_as_sf(f14_dates, coords = c("long","lat"), crs = 4326, remove = FALSE)
+f14_pts = st_as_sf(f14_clean, coords = c("lon","lat"), crs = 4326, remove = FALSE)
 ```
 
 
 ### write to shapefile
 ```{r}
-st_write(f14_thaw_pts, "../outputs/ThawPoints/Rocha_thaw_pts.shp", driver="ESRI Shapefile")
-st_write(f14_active_pts, "../outputs/ActivePoints/Rocha_active_pts.shp", driver="ESRI Shapefile")
 st_write(f14_pts, "../outputs/allPoints/Rocha_pts.shp", driver="ESRI Shapefile")
 ```
