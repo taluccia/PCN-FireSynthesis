@@ -5,12 +5,7 @@ date: "2023-07-11"
 output: html_document
 ---
 
----
-title: "Map"
-author: "Anna Talucci"
-date: "2023-03-20"
-output: html_document
----
+
 # clear environment
 ```{r}
 rm(list=ls())
@@ -37,9 +32,9 @@ library(ggrepel)
 # Projection
 [Some projection info]https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection)
 ```{r}
-polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
 ```
-
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
 # Data
 ## Points
 
@@ -50,6 +45,10 @@ points = st_read("../data/allPoints/AllDataPts.shp", "AllDataPts")
 ```{r}
 ptsEco = st_read("../data/allPoints/PtsEcozones.shp", "PtsEcozones")
 ```
+```{r}
+ptsEcoSum = st_read("../data/allPoints/PtsEcoSum.shp", "PtsEcoSum")
+```
+
 ```{r}
 ptsEco 
 ```
@@ -148,6 +147,7 @@ nh_pp = st_transform(nh, crs = polarProj)
 
 points_pp = st_transform(points, crs = polarProj)
 ptsEco_pp = st_transform(ptsEco, crs = polarProj)
+ptsEcoSum_pp = st_transform(ptsEcoSum, crs = polarProj)
 artic_pp = st_transform(arctic, crs = polarProj)
 perma_pp = st_transform(perma_con, crs = polarProj)
 perma_dis_pp = st_transform(perma_dis, crs = polarProj)
@@ -185,7 +185,18 @@ eco_grouped <- ptsEco_pp %>%
   left_join(., eco_groupedCt, by= 'ECO_NAME') %>%
   mutate(total = sum(count)) %>%
   mutate(prop = round(count/total, 5)) %>%
-  mutate(percent = round(prop*100, 2))
+  mutate(percent = round(prop*100, 2)) %>%
+  mutate(prct = ifelse(percent ==0.41, 0.4,
+                ifelse(percent ==45.32, 45.3,
+                ifelse(percent==6.61, 6.6,
+                ifelse(percent==0.73, 0.7,
+                ifelse(percent==18.41, 18.4,
+                ifelse(percent==1.65, 1.7,
+                ifelse(percent==23.34, 23.3,
+                ifelse(percent==1.43, 1.4,
+                       ifelse(percent==0.58, 0.6,
+                              ifelse(percent==1.52, 1.5,
+                                     ifelse(percent==0.01, 0.01, "F"))))))))))))
 ```
 
 ```{r}
@@ -336,7 +347,95 @@ coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
 
 ## Map
 ```{r}
-ggplot() +
+# corner points at bottom left and top right
+# supply as WGS84 and directly transform to target CRS (Mollweide)
+cornerpts <- data.frame(label = c('A', 'B'))
+cornerpts$geometry <- st_transform(st_sfc(st_point(c(279.26, 33.92)), st_point(c(102.34, 31.37)),
+                                          crs = 4326),
+                                   crs = polarProj)
+cornerpts <- st_as_sf(cornerpts)
+```
+
+```{r}
+disp_win_wgs84 <- st_sfc(st_point(c(279.26, 33.92)), st_point(c(102.34, 31.37)), crs = 4326)
+disp_win_wgs84
+
+disp_win_trans <- st_transform(disp_win_wgs84, crs = polarProj)
+disp_win_trans
+
+disp_win_coord <- st_coordinates(disp_win_trans)
+```
+
+```{r}
+#### zoom to kamchatka, different projection ####
+
+zoom_to <- c(180, 83)  # ~ center of Kamchatka
+zoom_level <- 2
+
+# Lambert azimuthal equal-area projection around center of interest
+target_crs <- polarProj#sprintf('+proj=laea +lon_0=%f +lat_0=%f', zoom_to[1], zoom_to[2])
+
+
+C <- 40075016.686   # ~ circumference of Earth in meters
+x_span <- C / 2^(zoom_level+.3)
+y_span <- C / 2^(zoom_level+1)   # also sets aspect ratio
+
+zoom_to_xy <- st_transform(st_sfc(st_point(zoom_to), crs = 4326), crs = target_crs)
+zoom_to_xy
+
+disp_window <- st_sfc(st_point(st_coordinates(zoom_to_xy - c(x_span / 2, y_span / 2))),
+                      st_point(st_coordinates(zoom_to_xy + c(x_span / 2, y_span / 2))),
+                      crs = target_crs)
+
+```
+```{r}
+ptsEcoSum_ppXY = ptsEcoSum_pp %>%
+  dplyr::mutate(x = sf::st_coordinates(.)[,1],
+                y = sf::st_coordinates(.)[,2]) %>%
+  mutate(y2 = ifelse(ECO_NAME =="Arctic coastal tundra", 2058704,
+                ifelse(ECO_NAME =="Arctic foothills tundra", 2014688,
+                ifelse(ECO_NAME =="Beringia lowland tundra", 3037260,
+                ifelse(ECO_NAME =="East Siberian taiga", 1939276,
+                ifelse(ECO_NAME =="Interior Alaska-Yukon lowland taiga", 2308010,
+                ifelse(ECO_NAME =="Interior Yukon-Alaska alpine tundra", 2150021, #Change
+                ifelse(ECO_NAME =="Muskwa-Slave Lake forests", 1491608,
+                ifelse(ECO_NAME =="Northeast Siberian taiga", 2238303,
+                       ifelse(ECO_NAME =="Northern Canadian Shield taiga", 1172495, #change
+                              ifelse(ECO_NAME =="Northwest Territories taiga", 1340179, #change
+                                     ifelse(ECO_NAME =="Yamal-Gydan tundra", -714854.6, 0)))))))))))) %>% 
+  mutate(prct = ifelse(percent ==0.41, 0.4,
+                ifelse(percent ==45.32, 45.3,
+                ifelse(percent==6.61, 6.6,
+                ifelse(percent==0.73, 0.7,
+                ifelse(percent==18.41, 18.4,
+                ifelse(percent==1.65, 1.7,
+                ifelse(percent==23.34, 23.3,
+                ifelse(percent==1.43, 1.4,
+                       ifelse(percent==0.58, 0.6,
+                              ifelse(percent==1.52, 1.5,
+                                     ifelse(percent==0.01, 0.01, -99))))))))))))
+
+
+```
+ mutate(y2 = ifelse(ECO_NAME =="Arctic coastal tundra", 2058704,
+                ifelse(ECO_NAME =="Arctic foothills tundra", 2014688,
+                ifelse(ECO_NAME =="Beringia lowland tundra", 3037260,
+                ifelse(ECO_NAME =="East Siberian taiga", 1939276,
+                ifelse(ECO_NAME =="Interior Alaska-Yukon lowland taiga", 2307996,
+                ifelse(ECO_NAME =="Interior Yukon-Alaska alpine tundra", 2291229,
+                ifelse(ECO_NAME =="Muskwa-Slave Lake forests", 1491608,
+                ifelse(ECO_NAME =="Northeast Siberian taiga", 2238303,
+                       ifelse(ECO_NAME =="Northern Canadian Shield taiga", 1234495,
+                              ifelse(ECO_NAME =="Northwest Territories taiga", 1410179,
+                                     ifelse(ECO_NAME =="Yamal-Gydan tundra", -714854.6, 0))))))))))))
+
+
+```{r}
+ptsEcoSum_ppXY
+```
+
+```{r fig.height=5, fig.width=6}
+( overviewMap = ggplot() +
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
     geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA, alpha=.75 ) +
   scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
@@ -344,24 +443,106 @@ ggplot() +
  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
    
   new_scale_fill() +
-  geom_sf(data = eco_grouped, aes( fill = ECO_NAME, color=ECO_NAME, size=percent),  pch=21, stroke =1.8, alpha=.65) +
+  geom_point(data = ptsEcoSum_ppXY, aes(x=x, y=y2, fill = ECO_NAME, color=ECO_NAME, size=percent, label=prct),  pch=21, stroke =1.8, alpha=.65) +
+   geom_text(data = ptsEcoSum_ppXY, aes(x=x, y=y2,label=prct)) +
     scale_fill_manual(values=ecoPalette) +
   scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black")) +
-  scale_size(range = c(9, 14), # point size range
+  scale_size(range = c(5, 10), # point size range
              breaks = c(1, 10, 20, 30, 40 , 50), limits = c(0, 50))+
-  geom_sf_text(data = eco_grouped, aes(label = percent), size=3) +
-    
-  coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  #geom_sf_text(data = eco_grouped, aes(label = prct), size=3) +
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
         size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
   theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
   theme(legend.position = "none", 
         axis.title.x = element_blank(), 
         axis.title.y = element_blank())
-
+)
 ```
 
+( overviewMap = ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+    geom_sf(data = permafrost1_pp, aes(fill = EXTENT), colour= NA, alpha=.75 ) +
+  scale_fill_manual(values = permafrost_palette, labels  = c("continuous", "discontinuous", "sporatic"),
+                      name = "Permafrost") +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=1, linetype="dashed") +
+   
+  new_scale_fill() +
+  geom_point(data = ptsEcoSum_ppXY, aes(x=x, y=y2, fill = ECO_NAME, color=ECO_NAME, size=percent,),  pch=21, stroke =1.8, alpha=.65) +
+    scale_fill_manual(values=ecoPalette) +
+  scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black")) +
+  scale_size(range = c(9, 14), # point size range
+             breaks = c(1, 10, 20, 30, 40 , 50), limits = c(0, 50))+
+  geom_sf_text(data = eco_grouped, aes(label = prct), size=3) +
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "none", 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank())
+)
 # Legend
+
+```{r}
+( overviewLegend = ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+   
+  new_scale_fill() +
+  geom_sf(data = eco_grouped, aes( fill = ECO_NAME, color=ECO_NAME),  pch=21, stroke =1.8, alpha=.7) +
+    scale_fill_manual(values=ecoPalette, name="Ecozones") +
+  scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black", name="Ecozones")) +
+  
+  geom_sf_text(data = eco_grouped, aes(label = percent), size=3) +
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "right",
+         legend.key=element_blank(),
+        legend.key.size = unit(4, 'mm'),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 8)),
+         fill = guide_legend(override.aes = list(size = 8)))
+)
+```
+
+```{r}
+( overviewLegendB = ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+   
+  new_scale_fill() +
+  geom_sf(data = eco_grouped, aes( fill = ECO_NAME, color=ECO_NAME),  pch=21, stroke =1.8, alpha=.7) +
+    scale_fill_manual(values=ecoPalette, name="Ecozones") +
+  scale_color_manual(values=c("black", "black", "black","black","black","black","black","black","black","black","black", name="Ecozones")) +
+  
+  geom_sf_text(data = eco_grouped, aes(label = percent), size=3) +
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "bottom",
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7),
+         legend.key=element_blank(),
+        legend.key.size = unit(5, 'mm'),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()) +
+  guides(color = guide_legend(title.position = "top", ncol=4,bycol=TRUE, override.aes = list(size = 4)),
+         fill = guide_legend(title.position = "top", ncol=4,bycol=TRUE, override.aes = list(size = 4)))
+)
+```
+
+
 ```{r fig.height=5, fig.width=6}
 (
   ContributorLegend <- ggplot() +
@@ -397,14 +578,16 @@ ggplot() +
         panel.background = element_rect(fill = "#C5D8D7"),
         plot.margin=unit(c(0,0,0,0), "mm"),
         legend.key=element_blank(),
-        legend.position = "bottom",
+        legend.position = "bottom",        
         legend.text=element_text(size=6),
-        legend.title=element_text(size=7)) + 
-  guides(fill=guide_legend(ncol=5,byrow=TRUE))
+        legend.title=element_text(size=7)) +
+ 
+  guides(fill=guide_legend(ncol=3,byrow=TRUE))
 )
 ```
 
-
+        legend.text=element_text(size=6),
+        legend.title=element_text(size=7)) +
 
 
 
@@ -417,12 +600,30 @@ legend_sites = cowplot::get_legend(ContributorLegend)
 ```
 
 ```{r}
+legendEco = cowplot::get_legend(overviewLegend)
+legendEcoB = cowplot::get_legend(overviewLegendB)
+```
+```{r}
 ( pairLegend = plot_grid(legend_permafrost, legend_sites, ncol = 1))
 ```
 ```{r fig.height=5, fig.width=6}
 (mapFigure = plot_grid(mapNoLegend, legend_permafrost, legend_sites, ncol = 1, rel_heights = c(1.1, .1, .1)) )
 ```
+
+```{r fig.height=7, fig.width=6}
+( overFigure = plot_grid(overviewMap, legend_permafrost, legendEcoB, ncol = 1, rel_heights = c(1.1, .1, .1)) )
+```
+
+
+
+
+
+
+# Save Image
 ```{r eval=FALSE, include=FALSE}
 ggsave("../figures/PCNMapSitesContributors.png", plot = mapFigure, dpi = 600, bg='white')
 ```
 
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNMapOverview.png", plot = overFigure, dpi = 600,height = 7, width = 6, units = "in", bg='white')
+```

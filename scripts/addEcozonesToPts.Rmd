@@ -77,8 +77,34 @@ combineData = st_join(points, arctic)
 combineData
 ```
 
+# grouped points
+```{r}
+(eco_groupedCt <- combineData %>% st_drop_geometry() %>%
+                group_by(ECO_NAME) %>%
+                summarise(count = n()) )
+```
+```{r}
+eco_grouped <- combineData %>%
+                group_by(ECO_NAME) %>%
+                summarise(st_union(geometry)) %>%
+                st_centroid() %>%
+  left_join(., eco_groupedCt, by= 'ECO_NAME') %>%
+  mutate(total = sum(count)) %>%
+  mutate(prop = round(count/total, 5)) %>%
+  mutate(percent = round(prop*100, 2)) %>%
+  dplyr::mutate(lon = sf::st_coordinates(.)[,1],
+                lat = sf::st_coordinates(.)[,2])
+```
+```{r}
+eco_grouped 
+
+```
 
 ### write to shapefile
 ```{r eval=FALSE, include=FALSE}
-st_write(combineData, "../outputs/PtsEcozones.shp", driver="ESRI Shapefile")
+st_write(combineData, "../outputs/points/PtsEcozones.shp", driver="ESRI Shapefile")
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(eco_grouped , "../outputs/points/PtsEcoSum.shp", driver="ESRI Shapefile")
 ```
