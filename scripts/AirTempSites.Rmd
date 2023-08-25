@@ -1,0 +1,82 @@
+---
+title: "Csv to Point"
+author: "Anna Talucci"
+date: "2023-08-17"
+output: html_document
+---
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+```{r}
+df <- read.csv('../data/holloway/AirTempSites.csv', header = TRUE) 
+```
+
+```{r}
+df
+```
+
+```{r}
+(
+  df1 = df %>% dplyr::select(Site.name, Latitude, Longitude) %>% rename(site=Site.name, lat=Latitude, lon=Longitude) %>%  drop_na(lat) %>% mutate(id = row_number())
+)
+
+```
+
+```{r}
+df_pts = st_as_sf(df1, coords = c("lon","lat"), crs = 4326, remove = FALSE) 
+
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(df_pts, "../outputs/AirTempSites.shp", driver="ESRI Shapefile")
+```
+
+# ERA5 Data
+```{r}
+era5 <- read.csv('../data/holloway/ERA5ATSDailyMeanT2M.csv', header = TRUE) 
+```
+
+```{r}
+
+( era5 = era5 %>%  dplyr::select(site, lat, lon, X20150501_temperature_2m:X20190930_temperature_2m) )
+```
+
+# Functions to clean 
+```{r}
+cleanDf = function(x)  {
+  x %>%
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "DateTemp",
+    values_to = "TempC",
+    values_drop_na = TRUE) %>% 
+  separate(DateTemp, c("tempDate", NA)) %>% 
+    mutate(across(tempDate, ~ . |> str_extract("\\d+") |> as.character())) %>%
+    mutate(tempDate=ymd(tempDate)) %>%
+    mutate(julianDay = yday(tempDate)) -> x
+  return(x)
+}
+```
+
+
+# Apply  Clean function
+```{r}
+( cleanEra5 = era5 %>% cleanDf() )
+```
+
+```{r}
+write.csv(cleanEra5, file = "../outputs/era5Clean/HollowaySitesLong.csv")
+```
