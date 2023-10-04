@@ -1,0 +1,336 @@
+---
+title: "FigureMapPlusPhotos"
+author: "Anna Talucci"
+date: "2023-10-02"
+output: html_document
+---
+
+
+# clear environment
+```{r}
+rm(list=ls())
+```
+
+
+# Overview
+
+Notes:
+[Better colors for Mapping](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/better-colors-for-better-mapping/)
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(RColorBrewer)
+library(cowplot)
+library(ggpubr)
+library(ggnewscale)
+library(scales)
+library(ggrepel)
+library(patchwork)
+```
+
+# Projection
+[Some projection info]https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection)
+```{r}
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+```
+polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+
+
+# Data
+## Points
+
+```{r}
+PtsEcoSumXY = st_read("../data/allPoints/PtsEcoSumXY.shp", "PtsEcoSumXY")
+```
+
+```{r}
+PtsEcoSumXY
+```
+
+```{r}
+unique(PtsEcoSumXY$ECO_NAME)
+```
+
+## World map
+https://datacatalog.worldbank.org/dataset/world-bank-official-boundaries
+
+```{r}
+wrld = st_read("../data/shapefiles/world/WB_countries_Admin0_10m.shp", "WB_countries_Admin0_10m")
+```
+
+
+## permafrost
+```{r}
+permafrost = st_read("../data/shapefiles/permafrost/permaice.shp", "permaice")
+```
+
+```{r}
+head(permafrost)
+```
+
+## WWF
+```{r}
+wwf = st_read("../data/wwfEcozones/wwf_terr_ecos.shp", "wwf_terr_ecos")
+```
+
+
+### WWF Data 
+```{r}
+wwf 
+```
+
+### Select Biomes
+```{r}
+( eco = 
+    wwf %>% 
+    filter(REALM %in% c("PA", "NA")) %>% 
+    dplyr::select(OBJECTID, ECO_NAME, REALM, BIOME, ECO_NUM, ECO_ID, geometry) %>% 
+    filter(BIOME %in% c(6, 11)) %>% 
+    mutate(color_eco = ifelse(ECO_NAME == "Arctic coastal tundra" , '#a6cee3',
+                        ifelse(ECO_NAME ==  "Arctic foothills tundra" , '#1f78b4',
+                        ifelse(ECO_NAME == "Beringia lowland tundra" , '#b2df8a',
+                        ifelse(ECO_NAME == "East Siberian taiga"  , '#33a02c',
+                        ifelse(ECO_NAME == "Interior Alaska-Yukon lowland taiga" , '#fb9a99',
+                        ifelse(ECO_NAME == "Interior Yukon-Alaska alpine tundra" , '#e31a1c',
+                        ifelse(ECO_NAME == "Muskwa-Slave Lake forests"  , '#fdbf6f',
+                        ifelse(ECO_NAME == "Northeast Siberian taiga" , '#ff7f00',
+                        ifelse(ECO_NAME == "Northern Canadian Shield taiga" , '#cab2d6',
+                        ifelse(ECO_NAME == "Northwest Territories taiga" , '#6a3d9a',
+                        ifelse(ECO_NAME == "Yamal-Gydan tundra" , '#ffff99', '#CCCCCC'))))))))))))
+)
+```
+
+ [1] "Arctic coastal tundra"               "Arctic foothills tundra"             "Beringia lowland tundra"            
+ [4] "East Siberian taiga"                 "Interior Alaska-Yukon lowland taiga" "Interior Yukon-Alaska alpine tundra"
+ [7] "Muskwa-Slave Lake forests"           "Northeast Siberian taiga"            "Northern Canadian Shield taiga"     
+[10] "Northwest Territories taiga"         "Yamal-Gydan tundra"                 
+
+```{r}
+ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
+```
+```{r}
+plot(st_geometry(eco))
+```
+
+
+## Arctic Circle 
+Arctic Circle shapefile came from [Natural Earth](https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-geographic-lines/)
+
+```{r}
+circle = st_read("../data/ne_110m_geographic_lines/ne_110m_geographic_lines.shp", "ne_110m_geographic_lines") 
+```
+```{r}
+arctic = circle %>% filter(name=="Arctic Circle")
+```
+
+
+
+# Filter shapefilres
+
+## Countries
+
+```{r}
+target = c("Asia", "Europe", "North America")
+```
+
+Filter for all
+```{r}
+nh  = wrld %>% 
+  filter(CONTINENT %in% target) %>%
+  dplyr::select( OBJECTID:FORMAL_EN, NAME_EN, ISO_A2, CONTINENT:REGION_WB, Shape_Leng:geometry) 
+```
+
+
+```{r}
+nh
+```
+
+## Permafrost
+
+```{r}
+permafrost1 = permafrost %>% 
+  filter(EXTENT %in% c("C", "D", "S")) 
+```
+
+# Reproject
+
+```{r}
+nh_pp = st_transform(nh, crs = polarProj)
+artic_pp = st_transform(arctic, crs = polarProj)
+eco_pp = st_transform(eco, crs = polarProj)
+```
+
+permafrost1_pp = st_transform(permafrost1, crs = polarProj)
+PtsEcoSumXY_pp = st_transform(PtsEcoSumXY, crs = polarProj)
+
+```{r}
+nh_pp
+```
+
+```{r}
+nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
+                                    ymin = 45, ymax = 90)
+```
+
+# Palettes
+
+```{r}
+ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
+```
+
+
+```{r}
+permafrost_palette = c('#71A6D1', '#99C4E1', '#C0E2F0')
+```
+
+```{r}
+brltnd_palette = c('#4a6741', '#3d3021')
+```
+xlim = c(-3302324, 2312498), ylim = c(-1108650,  3102452) 
+ymin: -25426070 xmax: 28628080 ymax: 8108557
+ xmin:  ymin:  xmax:  ymax: 
+ 
+ scale_color_manual(values = c("A" ="#fdae61","B" = "#ff6347", "C" = "#fee08b"), labels = c( "A" ="Tweedsmuir fire","B" = "Entiako fire", "C" = "Chelaslie fire" ), name = "Fire perimeters") +
+
+# Maps
+
+## Zoom Level
+```{r}
+zoom_to <- c(0, 90)  # Geographic North pole
+
+zoom_level <- 3
+
+lon_span <- 360 / 2^zoom_level
+lat_span <- 180 / 2^zoom_level
+```
+
+```{r}
+lon_bounds <- c(zoom_to[1] - lon_span / 2, zoom_to[1] + lon_span / 2)
+lat_bounds <- c(zoom_to[2] - lat_span / 2, zoom_to[2] + lat_span / 2)
+```
+coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
+## Display window 
+```{r}
+# corner points at bottom left and top right
+# supply as WGS84 and directly transform to target CRS (Mollweide)
+cornerpts <- data.frame(label = c('A', 'B'))
+cornerpts$geometry <- st_transform(st_sfc(st_point(c(279.26, 33.92)), st_point(c(102.34, 31.37)),
+                                          crs = 4326),
+                                   crs = polarProj)
+cornerpts <- st_as_sf(cornerpts)
+```
+
+```{r}
+disp_win_wgs84 <- st_sfc(st_point(c(279.26, 33.92)), st_point(c(102.34, 31.37)), crs = 4326)
+disp_win_wgs84
+
+disp_win_trans <- st_transform(disp_win_wgs84, crs = polarProj)
+disp_win_trans
+
+disp_win_coord <- st_coordinates(disp_win_trans)
+```
+
+```{r}
+#### zoom to kamchatka, different projection ####
+
+zoom_to <- c(180, 83)  # ~ center of Kamchatka
+zoom_level <- 2
+
+# Lambert azimuthal equal-area projection around center of interest
+target_crs <- polarProj#sprintf('+proj=laea +lon_0=%f +lat_0=%f', zoom_to[1], zoom_to[2])
+
+
+C <- 40075016.686   # ~ circumference of Earth in meters
+x_span <- C / 2^(zoom_level+.1)
+y_span <- C / 2^(zoom_level+.5)   # also sets aspect ratio
+
+zoom_to_xy <- st_transform(st_sfc(st_point(zoom_to), crs = 4326), crs = target_crs)
+zoom_to_xy
+
+disp_window <- st_sfc(st_point(st_coordinates(zoom_to_xy - c(x_span / 2, y_span / 2))),
+                      st_point(st_coordinates(zoom_to_xy + c(x_span / 2, y_span / 2))),
+                      crs = target_crs)
+
+```
+
+## Overview map by Ecozone
+```{r}
+( map = ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+      geom_sf(data = eco_pp, fill = eco_pp$color_eco, color=eco_pp$color_eco) +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=.5, linetype="dashed", alpha=.7) +
+
+
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "none", 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank())
+)
+```
+```{r}
+x_lines <- seq(-120,180, by = 60)
+
+( p1 = ggplot() +
+  geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+      geom_sf(data = eco_pp, fill = eco_pp$color_eco, color=eco_pp$color_eco) +
+ geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=.5, linetype="dashed", alpha=.7) +
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
+        panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "none", 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank())
+ )
+
+p1 + coord_sf(crs = sf::st_crs("ESRI:102016"))
+```
+
+```{r eval=FALSE, include=FALSE}
+ggsave("../figures/PCNOverviewMapTest.png", plot = overviewMap, dpi = 600, bg='white')
+```
+
+```{r}
+line1 = data.frame(x1 = 2.86, x2 = 5.2, y1 = 6.6, y2 = 6.25)
+line2 = data.frame(x1 = 2.87, x2 = 5.1, y1 = 4.1, y2 = 6.15)
+```
+```{r fig.height=7, fig.width=6}
+fig_maps6 = ggdraw(xlim = c(0, 6), ylim = c(0, 7)) +
+    draw_plot(map, x = .5, y = 1.5, width = 4.5, height = 4) + 
+  
+  #YKD
+  draw_image("../images/ForMapFigure/Unburned_YKD_Baillargeon.JPG", scale = 0.85, x = 0, y = 5.8, width = 2, height = 1) +
+  draw_image("../images/ForMapFigure/15Burn_YKD_Baillargeon.JPG", scale = 0.85, x = 1.5, y = 5.8, width = 2, height = 1) +
+  # Canada
+    draw_image("../images/ForMapFigure/KakisaB2014Quad1.JPG", scale = 0.85, x = 0, y = 4.6, width = 2, height = 1) +
+    draw_image("../images/ForMapFigure/CamsellUBQuad2.JPG", scale = 0.85, x = 0, y = 3.4, width = 2, height = 1) +
+    
+  #Alaska
+  draw_image("../images/ForMapFigure/IMG_3376.JPG", scale = 0.85, x = 0, y = 2.2, width = 2, height = 1) +
+    draw_image("../images/ForMapFigure/IMG_2867.JPG", scale = 0.85, x = 1.5, y = 2.2, width = 2, height = 1) +
+    draw_image("../images/ForMapFigure/IMG_2858.JPG", scale = 0.85, x = 3, y = 2.2, width = 2, height = 1) +
+  #Siberia
+    draw_image("../images/ForMapFigure/DJI_0999.JPG", scale = 0.85, x = 4.8, y = 4.6, width = 2, height = 1) +
+    draw_image("../images/ForMapFigure/DJI_0031.JPG", scale = 0.85, x = 4.8, y = 3.4, width = 2, height = 1) +
+  draw_image("../images/ForMapFigure/DSC7302-001.JPG", scale = 0.85, x = 4.8, y = 5.8, width = 2, height = 1) +
+
+  draw_label("A", x = 0.3, y = 6.8, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
+   draw_label("B", x = 0.3, y = 3.3, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
+   draw_label("C", x = 3.0, y = 3.3, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
+  geom_segment(data =line1, aes(x = x1, y = y1, xend = x2, yend = y2), linetype = "dotted",  colour = "#000080", size= 1, alpha = .5) +
+  geom_segment(data =line2, aes(x = x1, y = y1, xend = x2, yend = y2), linetype = "dotted",  colour = "#000080", size = 1, alpha = .5) 
+
+fig_maps6
+```
+
+```{r}
+ggsave("../figures/2020-07-12_UAV-Veg-NDVI-RGB.png", plot = fig_maps6, width = 6, height = 7, dpi = 600)
+```
