@@ -1,0 +1,61 @@
+---
+title: "Photo point data"
+author: "Anna Talucci"
+date: "2023-10-04"
+output: html_document
+---
+
+# Overview
+
+Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
+
+Use data from csv files in Google Drive
+
+What this script does:
+
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(sf)
+```
+
+# Projection
+
+WGS 84 need for gee
+```{r}
+wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
+```
+
+# Data
+```{r}
+data = read_csv('../data/photoDetails/PhotoData.csv')
+```
+
+# Filter NAs
+```{r}
+data1 = data %>% drop_na(lat)
+```
+
+## Function to make points
+```{r}
+df_to_sf <- function(x){
+  st_as_sf(x, coords = c("lon","lat"), crs = 4326, remove = FALSE)
+}
+```
+## Apply function
+```{r}
+data1_pts = df_to_sf(data1)
+```
+
+```{r}
+data1_pts
+```
+
+## write to shapefile
+
+```{r eval=FALSE, include=FALSE}
+st_write(f1_pts, "../outputs/photoPts.shp", driver="ESRI Shapefile")
+```
