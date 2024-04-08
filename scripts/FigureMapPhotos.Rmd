@@ -41,6 +41,13 @@ polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WG
 
 # Data
 ## Points
+```{r}
+photoPts = st_read("../data/photoPts/photoPts.shp", "photoPts")
+```
+
+```{r}
+( photoPts = photoPts %>% rename(aLabs = label) )
+```
 
 ```{r}
 PtsEcoSumXY = st_read("../data/allPoints/PtsEcoSumXY.shp", "PtsEcoSumXY")
@@ -109,7 +116,7 @@ wwf
 [10] "Northwest Territories taiga"         "Yamal-Gydan tundra"                 
 
 ```{r}
-ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
+ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99', '#CCCCCC')
 ```
 ```{r}
 plot(st_geometry(eco))
@@ -161,6 +168,7 @@ permafrost1 = permafrost %>%
 nh_pp = st_transform(nh, crs = polarProj)
 artic_pp = st_transform(arctic, crs = polarProj)
 eco_pp = st_transform(eco, crs = polarProj)
+photo_pp = st_transform(photoPts, crs = polarProj)
 ```
 
 permafrost1_pp = st_transform(permafrost1, crs = polarProj)
@@ -168,6 +176,7 @@ PtsEcoSumXY_pp = st_transform(PtsEcoSumXY, crs = polarProj)
 
 ```{r}
 nh_pp
+eco_pp
 ```
 
 ```{r}
@@ -178,7 +187,7 @@ nh_cropped <- st_crop(nh_pp, xmin = -180, xmax = 180,
 # Palettes
 
 ```{r}
-ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99')
+ecoPalette = c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#CCCCCC')
 ```
 
 
@@ -261,21 +270,71 @@ disp_window <- st_sfc(st_point(st_coordinates(zoom_to_xy - c(x_span / 2, y_span 
 ( map = ggplot() +
      geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
       geom_sf(data = eco_pp, fill = eco_pp$color_eco, color=eco_pp$color_eco) +
+ 
  geom_sf(data=artic_pp, fill=NA, colour = "#2F4F4F", lwd=.5, linetype="dashed", alpha=.7) +
-
+new_scale_fill() +
+  geom_point(data = photoPts, aes(x=x, y=y,)) +
 
   coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
     #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
   #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
   theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", size = 0.5), 
-        panel.background = element_rect(fill = "#C5D8D7")) +
+        panel.background = element_rect(fill = "#daf5f3")) +
   theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
-  theme(legend.position = "none", 
+  theme(legend.position = "bottom", 
         axis.title.x = element_blank(), 
         axis.title.y = element_blank())
 )
 ```
+
+# Maps with Legend
 ```{r}
+eco_pp
+```
+```{r}
+unique(eco_pp$ECO_NAME)
+
+```
+
+## Select for legend
+```{r}
+legend_eco = eco_pp %>%filter(ECO_NAME %in% c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Yamal-Gydan tundra", "Yukon Interior dry forests" ))
+```
+
+```{r}
+( legend = ggplot() +
+     geom_sf(data = nh_pp, fill = "#F9F6EE", colour="#A9AB9D") +
+   
+     geom_sf(data = legend_eco, aes(fill = ECO_NAME, color=ECO_NAME))+
+ 
+   scale_fill_manual(values=ecoPalette, name="Ecozones", labels = c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Yamal-Gydan tundra", "Other")) +
+    scale_color_manual(values=ecoPalette, name="Ecozones", labels = c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Yamal-Gydan tundra", "Other")) +
+
+
+  coord_sf(xlim = st_coordinates(disp_window)[,'X'], ylim = st_coordinates(disp_window)[,'Y']) +
+    #coord_sf(xlim = disp_win_coord[,'X'], ylim = disp_win_coord[,'Y']) +
+  #coord_sf(xlim = c(-4002324, 3512498), ylim = c(-3008650,  4002452) ) +
+  theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", 
+        size = 0.5), panel.background = element_rect(fill = "#C5D8D7")) +
+  theme(plot.margin=unit(c(0,0,0,0), "mm")) + 
+  theme(legend.position = "bottom",
+         legend.text=element_text(size=6),
+        legend.margin = margin(0, 0, 0, 0),
+        legend.title=element_text(size=7),
+         legend.key=element_blank(),
+        legend.key.size = unit(5, 'mm'),
+        axis.title.x = element_blank(), 
+        axis.title.y = element_blank()) +
+  guides(color = guide_legend(title.position = "top", ncol=3,bycol=TRUE, override.aes = list(size = 4)),
+         fill = guide_legend(title.position = "top", ncol=3,bycol=TRUE, override.aes = list(size = 4)))
+)
+```
+
+scale_fill_identity(values=eco_pp$color_eco, name="Ecozones", labels = c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Yamal-Gydan tundra", "Other")) +
+    scale_color_identity(values=eco_pp$color_eco, name="Ecozones", labels = c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Yamal-Gydan tundra", "Other")) +
+
+# Trying to clip map to circle
+```{r eval=FALSE, include=FALSE}
 x_lines <- seq(-120,180, by = 60)
 
 ( p1 = ggplot() +
@@ -294,43 +353,80 @@ theme(panel.grid.major = element_line(color = gray(0.5), linetype = "dashed", si
 p1 + coord_sf(crs = sf::st_crs("ESRI:102016"))
 ```
 
+
+# Grid map and photos
+
+## legend
+```{r}
+legendBot = cowplot::get_legend(legend)
+```
+
 ```{r eval=FALSE, include=FALSE}
-ggsave("../figures/PCNOverviewMapTest.png", plot = overviewMap, dpi = 600, bg='white')
+ggsave("../figures/legendBotPhotoMap.png", plot = legendBot, dpi = 600,  bg='white')
+```
+## Lines
+```{r}
+lineA1 = data.frame(x1 = 1.3, x2 = 3.0, y1 = 4.3, y2 = 4.05)
+lineA2 = data.frame(x1 = 1.8, x2 = 3.0, y1 = 4.3, y2 = 4.05)
 ```
 
 ```{r}
-line1 = data.frame(x1 = 2.86, x2 = 5.2, y1 = 6.6, y2 = 6.25)
-line2 = data.frame(x1 = 2.87, x2 = 5.1, y1 = 4.1, y2 = 6.15)
+lineB1 = data.frame(x1 = 1.2, x2 = 2.1, y1 = 3.5, y2 = 3.5)
+lineB2 = data.frame(x1 = 1.2, x2 = 2.15, y1 = 3.1, y2 = 3.4)
 ```
+
+```{r}
+lineC1 = data.frame(x1 = 4.3, x2 = 4.8, y1 = 2.6, y2 = 2.5)
+lineC2 = data.frame(x1 = 4.3, x2 = 4.8, y1 = 2.6, y2 = 1.7)
+lineC3 = data.frame(x1 = 4.3, x2 = 4.8, y1 = 2.6, y2 = .9)
+```
+
+## figure
 ```{r fig.height=7, fig.width=6}
-fig_maps6 = ggdraw(xlim = c(0, 6), ylim = c(0, 7)) +
-    draw_plot(map, x = .5, y = 1.5, width = 4.5, height = 4) + 
+fig1 = ggdraw(xlim = c(0, 6), ylim = c(0, 6)) +
+    draw_plot(map, x = .9, y = 1, width = 4.5, height = 4) + 
   
   #YKD
-  draw_image("../images/ForMapFigure/Unburned_YKD_Baillargeon.JPG", scale = 0.85, x = 0, y = 5.8, width = 2, height = 1) +
-  draw_image("../images/ForMapFigure/15Burn_YKD_Baillargeon.JPG", scale = 0.85, x = 1.5, y = 5.8, width = 2, height = 1) +
+  
+  geom_segment(data =lineA1, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#b2df8a', linewidth= .5) +
+  geom_segment(data =lineA2, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#b2df8a', linewidth = .5) +
+  draw_image("../images/ForMapFigure/Unburned_YKD_Baillargeon.JPG", scale = 0.8, x = 0, y = 4.2, width = 1.5, height = 1) +
+  draw_image("../images/ForMapFigure/15Burn_YKD_Baillargeon.JPG", scale = 0.8, x = 1.3, y = 4.2, width = 1.5, height = 1) +
+    draw_label("A1", x = .25, y = 5, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  draw_label("A2", x = 1.6, y = 5, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  
   # Canada
-    draw_image("../images/ForMapFigure/KakisaB2014Quad1.JPG", scale = 0.85, x = 0, y = 4.6, width = 2, height = 1) +
-    draw_image("../images/ForMapFigure/CamsellUBQuad2.JPG", scale = 0.85, x = 0, y = 3.4, width = 2, height = 1) +
-    
-  #Alaska
-  draw_image("../images/ForMapFigure/IMG_3376.JPG", scale = 0.85, x = 0, y = 2.2, width = 2, height = 1) +
-    draw_image("../images/ForMapFigure/IMG_2867.JPG", scale = 0.85, x = 1.5, y = 2.2, width = 2, height = 1) +
-    draw_image("../images/ForMapFigure/IMG_2858.JPG", scale = 0.85, x = 3, y = 2.2, width = 2, height = 1) +
+  
+  geom_segment(data =lineB1, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#fdbf6f', linewidth= .5) +
+  geom_segment(data =lineB2, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#fdbf6f', linewidth = .5) +
+    draw_image("../images/ForMapFigure/KakisaB2014Quad1.JPG", scale = 0.8, x = 0, y = 3.3, width = 1.5, height = 1) +
+    draw_image("../images/ForMapFigure/CamsellUBQuad2.JPG", scale = 0.8, x = 0, y = 2.4, width = 1.5, height = 1) +
+     draw_label("B1", x = .35, y = 4.1, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  draw_label("B2", x = .35, y = 3.1, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
   #Siberia
-    draw_image("../images/ForMapFigure/DJI_0999.JPG", scale = 0.85, x = 4.8, y = 4.6, width = 2, height = 1) +
-    draw_image("../images/ForMapFigure/DJI_0031.JPG", scale = 0.85, x = 4.8, y = 3.4, width = 2, height = 1) +
-  draw_image("../images/ForMapFigure/DSC7302-001.JPG", scale = 0.85, x = 4.8, y = 5.8, width = 2, height = 1) +
+    geom_segment(data =lineC1, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#ffff99', linewidth= .5) +
+  geom_segment(data =lineC2, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#ffff99', linewidth = .5) +
+  geom_segment(data =lineC3, aes(x = x1, y = y1, xend = x2, yend = y2), colour = '#ffff99', linewidth = .5) +
+    draw_image("../images/ForMapFigure/DJI_0999.JPG", scale = 0.8, x = 4.5, y = 1.8, width = 1.5, height = 1) +
+    draw_image("../images/ForMapFigure/DJI_0031.JPG", scale = 0.8, x = 4.5, y = 1.1, width = 1.5, height = 1) +
+draw_image("../images/ForMapFigure/DJI_0015.JPG", scale = 0.8, x = 4.5, y = .4, width = 1.5, height = 1.) +
+  
+   draw_label("C1", x = 4.75, y = 2.5, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  draw_label("C2", x = 4.75, y = 1.8, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  draw_label("C3", x = 4.75, y = .9, fontfamily = "sans", fontface = "bold", color = "black", size = 10) +
+  #legend
+  draw_image("../images/legendBotPhotoMap.PNG", scale = 0.8, x =1.6, y = .15, width = 3, height = 2) 
 
+ggsave("../figures/PhotoMap.png", plot = fig1, width = 6, height = 6, dpi = 600, bg='white')
+```
+
+
+
+  geom_segment(data =line1, aes(x = x1, y = y1, xend = x2, yend = y2), colour = "#000080", linewidth= 1, alpha = .5) +
+  geom_segment(data =line2, aes(x = x1, y = y1, xend = x2, yend = y2), colour = "#000080", linewidth = 1, alpha = .5) 
   draw_label("A", x = 0.3, y = 6.8, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
    draw_label("B", x = 0.3, y = 3.3, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
    draw_label("C", x = 3.0, y = 3.3, fontfamily = "sans", fontface = "bold", color = "black", size = 14) +
-  geom_segment(data =line1, aes(x = x1, y = y1, xend = x2, yend = y2), linetype = "dotted",  colour = "#000080", size= 1, alpha = .5) +
-  geom_segment(data =line2, aes(x = x1, y = y1, xend = x2, yend = y2), linetype = "dotted",  colour = "#000080", size = 1, alpha = .5) 
-
-fig_maps6
-```
-
 ```{r}
-ggsave("../figures/2020-07-12_UAV-Veg-NDVI-RGB.png", plot = fig_maps6, width = 6, height = 7, dpi = 600)
+ggsave("../figures/PhotoMap.png", plot = fig1, width = 6, height = 6, dpi = 600, bg='white')
 ```

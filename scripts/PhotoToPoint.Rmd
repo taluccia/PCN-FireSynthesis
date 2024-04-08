@@ -7,11 +7,7 @@ output: html_document
 
 # Overview
 
-Adapt script form M. Loranty data_cleaning, to only clean and not aggregate data. 
-
-Use data from csv files in Google Drive
-
-What this script does:
+Creating points to link with field photos. 
 
 
 # Packages
@@ -31,7 +27,7 @@ wgs_proj =  "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs "
 
 # Data
 ```{r}
-data = read_csv('../data/photoDetails/PhotoData.csv')
+data = read.csv('../data/photoDetails/PhotoData.csv')
 ```
 
 # Filter NAs
@@ -57,5 +53,5 @@ data1_pts
 ## write to shapefile
 
 ```{r eval=FALSE, include=FALSE}
-st_write(f1_pts, "../outputs/photoPts.shp", driver="ESRI Shapefile")
+st_write(data1_pts, "../outputs/photoPts.shp", driver="ESRI Shapefile")
 ```

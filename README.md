@@ -1,6 +1,21 @@
 # PCN-FireSynthesis
 
+## Overview
 
+
+## Script order
+
+### Data prep
+1. CleanToPointCombine.Rmd --- This script takes each data contribution and checks abnormalities and formatting issues. It fixes any issues. Data is then combines into a single data frame and converted in to a spatial data set and saved as a shapefile. 
+
+2. ERA5DataClean.Rmd
+
+## Analysis
+3. MeasuredDatesStandardizedDates.Rmd
+
+### Figures
+1. addEcozonesToPts.Rmd
+2. ManuscriptMap.Rmd --- over view map with permafrost distribution and data site contribution summaries
 
 
 # ERA5 Data

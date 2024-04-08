@@ -12,6 +12,9 @@ rm(list=ls())
 
 
 # Overview
+Create ecoregion centroids for Manuscript map.
+
+
 
 Notes:
 [Better colors for Mapping](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/better-colors-for-better-mapping/)
@@ -26,7 +29,10 @@ library(cowplot)
 library(ggpubr)
 library(ggnewscale)
 ```
+
 # Projection
+[Some projection info]https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection)
+
 ```{r}
 polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
 ```
@@ -62,7 +68,7 @@ arctic = wwf %>% filter(REALM %in% c("PA", "NA")) %>% dplyr::select(OBJECTID, EC
 ```{r}
 arctic
 ```
-```{r}
+```{r eval=FALSE, include=FALSE}
 plot(st_geometry(arctic))
 ```
 
@@ -77,24 +83,23 @@ combineData = st_join(points, arctic)
 ```{r}
 combineData
 ```
-# Eco region centroids
-'Arctic coastal tundra', 'Arctic foothills tundra', 'Beringia lowland tundra', 'East Siberian taiga', 'Interior Alaska-Yukon lowland taiga', 'Interior Yukon-Alaska alpine tundra', 'Muskwa-Slave Lake forests', 'Northeast Siberian taiga', 'Northern Canadian Shield taiga', 'Northwest Territories taiga'
-# Projection
-[Some projection info]https://nsidc.org/data/user-resources/help-center/guide-nsidcs-polar-stereographic-projection)
 ```{r}
-polarProj = "+proj=stere +lat_0=90 +lat_ts=70 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
+unique(combineData$ECO_NAME)
 ```
 ```{r}
-( ecoPoly = arctic %>% 
-    filter(ECO_NAME %in% c('Arctic coastal tundra', 'Arctic foothills tundra', 'Beringia lowland tundra', 'East Siberian taiga', 'Interior Alaska-Yukon lowland taiga', 'Interior Yukon-Alaska alpine tundra', 'Muskwa-Slave Lake forests', 'Northeast Siberian taiga', 'Northern Canadian Shield taiga', 'Northwest Territories taiga')) )
+cat(paste0(sprintf('"%s"', sort(unique(combineData$ECO_NAME))), collapse = ", "))
 ```
 
-st_geometry() %>% # pull just geometry
-  st_combine() %>%  # from many points to a single multipoint
-  st_centroid() %>% # compute centroid of the multipoint
-  st_as_sf() # make it a sf object again
+
+# Create Centroid by Ecoregion
 ```{r}
-ArcCoastTund =  arctic %>% 
+( ecoPoly = arctic %>% 
+    filter(ECO_NAME %in% c("Arctic coastal tundra", "Arctic foothills tundra", "Beringia lowland tundra", "Beringia upland tundra", "Brooks-British Range tundra", "Cherskii-Kolyma mountain tundra", "Chukchi Peninsula tundra", "East Siberian taiga", "Interior Alaska-Yukon lowland taiga", "Interior Yukon-Alaska alpine tundra", "Muskwa-Slave Lake forests", "Northeast Siberian taiga", "Northern Canadian Shield taiga", "Northwest Territories taiga", "Pacific Coastal Mountain icefields and tundra", "Yamal-Gydan tundra")) )
+```
+
+## 1. "Arctic coastal tundra"
+```{r}
+eco01 =  arctic %>% 
     filter(ECO_NAME=='Arctic coastal tundra') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -103,8 +108,9 @@ ArcCoastTund =  arctic %>%
   mutate(ECO_NAME='Arctic coastal tundra')
 ```
 
+## 2. "Arctic foothills tundra"
 ```{r}
-ArcFootTund =  arctic %>% 
+eco02 =  arctic %>% 
     filter(ECO_NAME=='Arctic foothills tundra') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -113,8 +119,9 @@ ArcFootTund =  arctic %>%
   mutate(ECO_NAME='Arctic foothills tundra')
 ```
 
+## 3. "Beringia lowland tundra"
 ```{r}
-BerLowTund =  arctic %>% 
+eco03 =  arctic %>% 
     filter(ECO_NAME=='Beringia lowland tundra') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -122,9 +129,55 @@ BerLowTund =  arctic %>%
   st_as_sf() %>% # make it a sf object again 
   mutate(ECO_NAME='Beringia lowland tundra')
 ```
+## 4. "Beringia upland tundra" 
 
 ```{r}
-EastSibTaig =  arctic %>% 
+eco04 =  arctic %>% 
+    filter(ECO_NAME=='Beringia upland tundra') %>%
+    st_geometry() %>% # pull just geometry
+  st_combine() %>%  # from many points to a single multipoint
+  st_centroid() %>% # compute centroid of the multipoint
+  st_as_sf() %>% # make it a sf object again 
+  mutate(ECO_NAME='Beringia upland tundra')
+```
+
+## 5. "Brooks-British Range tundra"
+
+```{r}
+eco05 =  arctic %>% 
+    filter(ECO_NAME=='Brooks-British Range tundra') %>%
+    st_geometry() %>% # pull just geometry
+  st_combine() %>%  # from many points to a single multipoint
+  st_centroid() %>% # compute centroid of the multipoint
+  st_as_sf() %>% # make it a sf object again 
+  mutate(ECO_NAME='Brooks-British Range tundra')
+```
+
+## 6. "Cherskii-Kolyma mountain tundra"
+
+```{r}
+eco06 =  arctic %>% 
+    filter(ECO_NAME=='Cherskii-Kolyma mountain tundra') %>%
+    st_geometry() %>% # pull just geometry
+  st_combine() %>%  # from many points to a single multipoint
+  st_centroid() %>% # compute centroid of the multipoint
+  st_as_sf() %>% # make it a sf object again 
+  mutate(ECO_NAME='Cherskii-Kolyma mountain tundra')
+```
+## 7. "Chukchi Peninsula tundra"
+
+```{r}
+eco07 =  arctic %>% 
+    filter(ECO_NAME=='Chukchi Peninsula tundra') %>%
+    st_geometry() %>% # pull just geometry
+  st_combine() %>%  # from many points to a single multipoint
+  st_centroid() %>% # compute centroid of the multipoint
+  st_as_sf() %>% # make it a sf object again 
+  mutate(ECO_NAME='Chukchi Peninsula tundra')
+```
+## 8. "East Siberian taiga"
+```{r}
+eco08 =  arctic %>% 
     filter(ECO_NAME=='East Siberian taiga') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -133,8 +186,9 @@ EastSibTaig =  arctic %>%
   mutate(ECO_NAME='East Siberian taiga')
 ```
 
+## 9. "Interior Alaska-Yukon lowland taiga"
 ```{r}
-InAkYkLowTai =  arctic %>% 
+eco09 =  arctic %>% 
     filter(ECO_NAME=='Interior Alaska-Yukon lowland taiga') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -143,8 +197,9 @@ InAkYkLowTai =  arctic %>%
   mutate(ECO_NAME='Interior Alaska-Yukon lowland taiga')
 ```
 
+## 10. "Interior Yukon-Alaska alpine tundra"
 ```{r}
-InYkAkAlpTai =  arctic %>% 
+eco10 =  arctic %>% 
     filter(ECO_NAME=='Interior Yukon-Alaska alpine tundra') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -153,8 +208,9 @@ InYkAkAlpTai =  arctic %>%
   mutate(ECO_NAME='Interior Yukon-Alaska alpine tundra')
 ```
 
+## 11. "Muskwa-Slave Lake forests"
 ```{r}
-MuckSlaLkF =  arctic %>% 
+eco11 =  arctic %>% 
     filter(ECO_NAME=='Muskwa-Slave Lake forests') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -163,8 +219,9 @@ MuckSlaLkF =  arctic %>%
   mutate(ECO_NAME='Muskwa-Slave Lake forests')
 ```
 
+## 12. "Northeast Siberian taiga"
 ```{r}
-NESTai=  arctic %>% 
+eco12=  arctic %>% 
     filter(ECO_NAME=='Northeast Siberian taiga') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -173,8 +230,9 @@ NESTai=  arctic %>%
   mutate(ECO_NAME='Northeast Siberian taiga')
 ```
 
+## 13. "Northern Canadian Shield taiga"
 ```{r}
-CanTaigSh=  arctic %>% 
+eco13=  arctic %>% 
     filter(ECO_NAME=='Northern Canadian Shield taiga') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -182,9 +240,9 @@ CanTaigSh=  arctic %>%
   st_as_sf() %>% # make it a sf object again 
   mutate(ECO_NAME='Northern Canadian Shield taiga')
 ```
-
+## 14. "Northwest Territories taiga"
 ```{r}
-( NWTTaig=  arctic %>% 
+( eco14=  arctic %>% 
     filter(ECO_NAME=='Northwest Territories taiga') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -193,8 +251,23 @@ CanTaigSh=  arctic %>%
   mutate(ECO_NAME='Northwest Territories taiga')
 )
 ```
+
+## 15. "Pacific Coastal Mountain icefields and tundra" 
+
 ```{r}
-( ygTun=  arctic %>% 
+( eco15 = arctic %>% 
+    filter(ECO_NAME=='Pacific Coastal Mountain icefields and tundra') %>%
+    st_geometry() %>% # pull just geometry
+  st_combine() %>%  # from many points to a single multipoint
+  st_centroid() %>% # compute centroid of the multipoint
+  st_as_sf() %>% # make it a sf object again 
+  mutate(ECO_NAME='Pacific Coastal Mountain icefields and tundra')
+)
+```
+## 16. "Yamal-Gydan tundra"
+
+```{r}
+( eco16 =  arctic %>% 
     filter(ECO_NAME=='Yamal-Gydan tundra') %>%
     st_geometry() %>% # pull just geometry
   st_combine() %>%  # from many points to a single multipoint
@@ -205,7 +278,7 @@ CanTaigSh=  arctic %>%
 ```
 ```{r}
 ( 
-  ecocentroid = bind_rows(ArcCoastTund, ArcFootTund, BerLowTund, EastSibTaig, InAkYkLowTai, InYkAkAlpTai, MuckSlaLkF, NESTai, CanTaigSh, NWTTaig, ygTun) %>% rename(geometry = x)
+  ecocentroid = bind_rows(eco01, eco02, eco03, eco04, eco05, eco06, eco07, eco08, eco09, eco10, eco11, eco12, eco13, eco14, eco15, eco16) %>% rename(geometry = x)
 )
 ```
 
@@ -227,7 +300,7 @@ CanTaigSh=  arctic %>%
                 summarise(count = n()) )
 ```
 ```{r}
-eco_grouped <- combineData %>%
+( eco_grouped <- combineData %>%
                 group_by(ECO_NAME) %>%
                 summarise(st_union(geometry)) %>%
                 st_centroid() %>%
@@ -237,27 +310,44 @@ eco_grouped <- combineData %>%
   mutate(percent = round(prop*100, 2)) %>%
   dplyr::mutate(lon = sf::st_coordinates(.)[,1],
                 lat = sf::st_coordinates(.)[,2]) %>%
-  st_drop_geometry()
+  st_drop_geometry() )
+
 ```
 
 
 ```{r}
-EcoXY = reproj %>%
+(
+  EcoXY = reproj %>%
   left_join(., eco_grouped, by='ECO_NAME') %>%
-  mutate(prct = ifelse(percent ==0.41, 0.4,
-                ifelse(percent ==45.32, 45.3,
-                ifelse(percent==6.61, 6.6,
-                ifelse(percent==0.73, 0.7,
-                ifelse(percent==18.41, 18.4,
-                ifelse(percent==1.65, 1.7,
-                ifelse(percent==23.34, 23.3,
-                ifelse(percent==1.43, 1.4,
-                       ifelse(percent==0.58, 0.6,
-                              ifelse(percent==1.52, 1.5,
-                                     ifelse(percent==0.01, 0.01, -99))))))))))))
+  mutate(prct = ifelse(percent ==0.38, 0.4,
+                ifelse(percent ==42.53, 42.5,
+                ifelse(percent==4.49, 4.5,
+                ifelse(percent==0.08, 0.08,
+                ifelse(percent==0.06, 0.06,
+                ifelse(percent==0.05, 0.05,
+                ifelse(percent==0.95, 0.95,
+                ifelse(percent==0.34, 0.3,
+                ifelse(percent==12.81, 12.8,
+                ifelse(percent==6.10, 6.1,
+                ifelse(percent==22.44, 22.4,
+                ifelse(percent==1.5, 1.5,
+                ifelse(percent==2.16, 2.2,
+                ifelse(percent==3.08, 3.1,
+                       ifelse(percent==2.76, 2.8,
+                              ifelse(percent==0.01, 0.01,
+                                     ifelse(percent==0.26, 0.3, -99))))))))))))))))))
+)
 
 ```
 
+```{r}
+(
+  EcoXY = reproj %>%
+  left_join(., eco_grouped, by='ECO_NAME') %>%
+  mutate(prct = signif(percent,digits=3))
+)
+
+```
 ```{r}
 EcoXY
 ```
@@ -271,5 +361,5 @@ st_write(eco_grouped , "../outputs/points/PtsEcoSum.shp", driver="ESRI Shapefile
 ```
 
 ```{r eval=FALSE, include=FALSE}
-st_write(EcoXY , "../outputs/points/PtsEcoSumXY.shp", driver="ESRI Shapefile")
+st_write(EcoXY , "../outputs/points/PtsEcoSumXYResolve.shp", driver="ESRI Shapefile")
 ```

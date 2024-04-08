@@ -47,3 +47,9 @@ allDataALT %>% group_by(cntry_c, brl_tnd, plot_id, site_id, last_nm) %>%
 allDataALT %>% group_by(cntry_c, brl_tnd, fire_yr, last_nm) %>%
   summarize(n=n())
 ```
+
+```{r}
+allDataALT %>% group_by(cntry_c, brl_tnd, last_nm) %>%
+  summarize(fireYears = paste(unique(fire_yr), collapse = ",")) %>%
+  write_csv(., '../outputs/fireYearSummary.csv')
+```

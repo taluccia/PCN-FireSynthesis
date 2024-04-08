@@ -114,7 +114,9 @@ artic_pp = st_transform(arctic, crs = polarProj)
 permafrost1_pp = st_transform(permafrost1, crs = polarProj)
 ```
 
-
+```{r}
+PtsEcoSumXY_pp
+```
 
 ```{r}
 nh_pp

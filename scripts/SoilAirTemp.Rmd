@@ -6,7 +6,7 @@ output: html_document
 ---
 
 # Overview
-
+**MOVE TO EXTRA**
 Notes form email with Mike:
 Regarding the date - I think the approach you describe using climate data probably makes sense, though the maximum may be reached before mean temps drop below freezing. This paper indicates that max thaw occurs during the last two weeks in August in Utqiagvik, and I think average temps are still above freezing at this point. In my limited experience in Cherskiy, thaw depth tends to plateau around early Sept when temps are still above freezing as well. It might be the case that max thaw occurs roughly when air and soil temps are approximately similar, and once air temps get lower there can be bottom-up freezing as the soil loses heat to the atmosphere. In Cherskiy soil temps never typically do not exceed 4C. Sorry, but of a stream of consciousness here. 
 
