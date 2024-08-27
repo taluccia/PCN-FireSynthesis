@@ -41,6 +41,7 @@ rsconnect/
 **/._.DS_Store
 **/scripts/._FiguresPredictedvsMeasured.Rmd
 **/._PCN-FireSynthesis.Rproj
+._*
 # exclude specific folders from push to github
 figures/*
 images/*
